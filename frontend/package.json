@@ -7,9 +7,12 @@
 		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
 	},
 	"dependencies": {
+		"autoprefixer": "^10.3.4",
 		"highlight.js": "11.1.0",
+		"postcss": "^8.3.6",
 		"react": "17.0.2",
-		"react-dom": "17.0.2"
+		"react-dom": "17.0.2",
+		"tailwindcss": "^2.2.15"
 	},
 	"devDependencies": {
 		"shadow-cljs": "2.15.2"
