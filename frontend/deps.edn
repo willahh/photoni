@@ -1,6 +1,7 @@
 {:paths ["src" "dev" "firebase"]
  :deps  {;stuff to help develop and compile cljs source
          org.clojure/clojure       {:mvn/version "1.10.3"}
+         org.clojure/test.check    {:mvn/version "1.1.0"}
          thheller/shadow-cljs      {:mvn/version "2.15.2"}
          nrepl/nrepl               {:mvn/version "0.8.3"}
          cider/piggieback          {:mvn/version "0.5.2"}
