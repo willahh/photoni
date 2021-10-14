@@ -1,17 +1,15 @@
 (ns frontend.db
   (:require [clojure.string :as str]
             [datascript.core :as d]
-            [datascript.db :as db]
-            [datascript.transit :as dt]
-            #?(:clj [frontend.utils.macro :refer [profile]]
-               :cljs [re-frame.core :as re-frame]))
-  #?(:cljs (:require-macros
-             [frontend.utils.macro :refer [profile]])) )
-
+            [datascript.db :as db]))
 
 (def default-db
-  {:name "re-frame"})
-
+  {:users [#:user{:id 3,
+                  :name "resolutefrayed",
+                  :title "Marketing Manager",
+                  :email "linuxhack@sbcglobal.net",
+                  :role "J01hr9O1y974DL7oj3IvE6gaFb6MVf",
+                  :age 173392}]})
 
 (def schema {:user/id     {:db.unique :db.unique/identity}
              :user/name   {}
@@ -46,75 +44,6 @@
 
 
 
-
-
-
-;;;;;;;;;;;;;; localstorage
-(declare render persist)
-(defn reset-conn! [db]
-  (prn "reset-conn!" )
-  (prn "db: " db)
-  (reset! conn db)
-  #_(render db)
-
-
-  #_(assoc reframe-db :users (conj (:users db) {:id 1}))
-
-  #_#?(:cljs (re-frame/dispatch-sync [:frontend.events/initialize-db]))
-
-
-  (persist db))
-
-
-
-
-(defonce history (atom []))
-(def ^:const history-limit 10)
-
-;; logging of all transactions (prettified)
-(d/listen! conn :log
-           (fn [tx-report]
-             (let [tx-id  (get-in tx-report [:tempids :db/current-tx])
-                   datoms (:tx-data tx-report)
-                   datom->str (fn [d] (str (if (:added d) "+" "−")
-                                           "[" (:e d) " " (:a d) " " (pr-str (:v d)) "]"))]
-               (println
-                 (str/join "\n" (concat [(str "tx " tx-id ":")] (map datom->str datoms)))))))
-
-;; history
-
-#_(d/listen! conn :history
-           (fn [tx-report]
-             (let [{:keys [db-before db-after]} tx-report]
-               (when (and db-before db-after)
-                 (swap! history (fn [h]
-                                  (-> h
-                                      (u/drop-tail #(identical? % db-before))
-                                      (conj db-after)
-                                      (u/trim-head history-limit))))))))
-
-;; transit serialization
-
-(defn db->string [db]
-  (profile "db serialization"
-           (dt/write-transit-str db)))
-
-(defn string->db [s]
-  (profile "db deserialization"
-           (dt/read-transit-str s)))
-
-;; persisting DB between page reloads
-(defn persist [db]
-  (js/localStorage.setItem "datascript-todo/DB" (db->string db)))
-
-(d/listen! conn :persistence
-           (fn [tx-report] ;; FIXME do not notify with nil as db-report
-             ;; FIXME do not notify if tx-data is empty
-             (when-let [db (:db-after tx-report)]
-               (js/setTimeout #(persist db) 0))))
-
-#_(js/localStorage.clear)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 

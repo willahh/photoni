@@ -6,7 +6,8 @@
    [frontend.routes :as routes]
    [frontend.views :as views]
    [frontend.config :as config]
-   [frontend.user :as user]))
+   [frontend.user :as user]
+   [frontend.persist-localstorage]))
 
 
 (defn dev-setup []
