@@ -21,15 +21,18 @@
                                 :user/role
                                 :user/age]))
 
-
 (defn generate-user-stub []
   (gen/generate (s/gen :user/user)))
 
 (comment
   "Some tests"
   (generate-user-stub)
-  => #:user{:id 495, :name "FCwTp37c5pADsRzMk18c", :age 416}
-
+  => #:user{:id 126,
+            :name "barelyplonker",
+            :title "Marketing Manager",
+            :email "konit@aol.com",
+            :role "KtW604pWpq2Krs730K6",
+            :age 1284658}
 
   )
 
