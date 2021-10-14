@@ -2,5 +2,6 @@
  :deps
  {
   clj-http/clj-http {:mvn/version "3.10.0"}
+  org.clojure/algo.generic {:mvn/version "0.1.3"}
 
   }}

@@ -6,7 +6,7 @@
    [frontend.routes :as routes]
    [frontend.views :as views]
    [frontend.config :as config]
-   ))
+   [frontend.user :as user]))
 
 
 (defn dev-setup []
