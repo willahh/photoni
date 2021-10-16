@@ -1,35 +1,35 @@
 (ns frontend.pages.home.home
   (:require
-    [re-frame.core :as re-frame]
-    [frontend.subs :as subs]
     [frontend.events :as events]
-    [frontend.tailwind-styles :as styles]
-    [re-frame.core :refer [subscribe dispatch]]
+    [frontend.utils.tailwind-styles :as styles]
+    [re-frame.core :as re-frame :refer [subscribe dispatch]]
     [frontend.components.components :as components]
-    [frontend.domain.user :as domain-user]))
+    [frontend.domain.user :as domain-user]
+    [frontend.pages.user.user-list :as page-user-list]))
+
+(re-frame/reg-sub
+  ::name
+  (fn [db]
+    (:name db)))
 
 (defn home-panel []
-  (let [name (re-frame/subscribe [::subs/name])]
+  (let [name (subscribe [::name])]
     [:div
      [:h1
       (str "Hello from " @name ". This is the Home Page23.")]
 
      [:div
-      [:a {:on-click #(re-frame/dispatch [::events/navigate :about])}
+      [:a {:on-click #(dispatch [::events/navigate :about])}
        "Home"]]
 
      [:div
-      [:a {:on-click #(re-frame/dispatch [::events/navigate :about])}
+      [:a {:on-click #(dispatch [::events/navigate :about])}
        "About"]]
 
      [:div
-      [:a {:on-click #(re-frame/dispatch [::events/navigate :about])}
+      [:a {:on-click #(dispatch [::events/navigate :about])}
        "Users"]]
 
+     (page-user-list/user-page)
 
-     (let [users @(subscribe [:users])]
-       (components/user-list users {:add-user-fn
-                                    (fn []
-                                      (let [user (domain-user/generate-user-stub)]
-                                        (dispatch [:add-user user])))}))
      ]))

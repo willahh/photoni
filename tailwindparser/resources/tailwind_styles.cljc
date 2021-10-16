@@ -1,4 +1,4 @@
-(ns frontend.tailwind-styles)
+(ns frontend.utils.tailwind-styles)
 
 (def container :container)
 (def sr-only :sr-only)

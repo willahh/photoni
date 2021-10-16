@@ -2,13 +2,13 @@
   (:require
    [reagent.dom :as rdom]
    [re-frame.core :as re-frame]
-   [frontend.events :as events]
    [frontend.routes :as routes]
    [frontend.views :as views]
    [frontend.config :as config]
-   [frontend.user :as user]
-   [frontend.persist-localstorage]))
-
+   [frontend.pages.user.user-list]
+   [frontend.events :as events]
+   [day8.re-frame.tracing :refer-macros [fn-traced]]
+   [frontend.utils.persist-localstorage]))
 
 (defn dev-setup []
   (when config/debug?

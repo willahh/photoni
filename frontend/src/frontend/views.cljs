@@ -1,10 +1,8 @@
 (ns frontend.views
   (:require
     [re-frame.core :as re-frame]
-    [frontend.events :as events]
     [frontend.routes :as routes]
-    [frontend.subs :as subs]
-    [frontend.tailwind-styles :as styles]
+    [frontend.utils.tailwind-styles :as styles]
 
     [re-frame.core :refer [subscribe dispatch]]
     [frontend.components.components :as components]
@@ -20,6 +18,12 @@
 
 ;; main
 
+
+(re-frame/reg-sub
+  ::active-panel
+  (fn [db _]
+    (:active-panel db)))
+
 (defn main-panel []
-  (let [active-panel (re-frame/subscribe [::subs/active-panel])]
+  (let [active-panel (re-frame/subscribe [::active-panel])]
     (routes/panels @active-panel)))

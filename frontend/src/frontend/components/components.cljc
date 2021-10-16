@@ -1,8 +1,8 @@
 (ns frontend.components.components
-  (:require [frontend.tailwind-styles :as styles]))
+  (:require [frontend.utils.tailwind-styles :as styles]))
 
 (defn user-list
-  [users {:keys [add-user-fn]}]
+  [users {:keys [add-user-fn delete-user-fn]}]
   [:div
    [:div {:class [styles/md:flex styles/md:items-center styles/md:justify-between]}
     [:div {:class [styles/flex-1 styles/min-w-0]}
@@ -39,7 +39,8 @@
                 [:td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 role]
                 [:td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
                  [:a.text-indigo-600.hover:text-indigo-900 {:href "#"} "Edit"]
-                 [:a.text-indigo-600.hover:text-indigo-900 {:href "#"} "Delete"]]])
+                 [:a.text-indigo-600.hover:text-indigo-900 {:href "#"
+                                                            :on-click (fn [] (delete-user-fn id))} "Delete"]]])
              users)
         ]]]]]]]
   )

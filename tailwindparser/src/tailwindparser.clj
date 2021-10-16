@@ -26,7 +26,7 @@
                                                 ) ~(keyword v))))
 
                           (clojure.string/join "\n")
-                          (str "(ns frontend.tailwind-styles)\n\n"))]
+                          (str "(ns frontend.utils.tailwind-styles)\n\n"))]
     (spit "resources/tailwind_styles.cljc" file-content)))
 
 (defn recursive-hiccup-w-class

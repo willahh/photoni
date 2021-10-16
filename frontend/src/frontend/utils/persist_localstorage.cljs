@@ -1,8 +1,8 @@
-(ns frontend.persist-localstorage
+(ns frontend.utils.persist-localstorage
   (:require [clojure.string :as str]
             [re-frame.core :as re-frame]
             [datascript.core :as d]
-            [datascript.db :as db]
+            [frontend.db.db :as db]
             [datascript.transit :as dt])
   (:require-macros [frontend.utils.macro :refer [profile]]))
 
@@ -12,12 +12,12 @@
 (declare render persist)
 (defn reset-conn! [db]
   (prn "reset-conn!" )
-  (prn "db: " db)
-  (reset! frontend.db/conn db)
+
+  (reset! db/conn db)
+  (prn "db/conn: " db/conn)
   #_(render db)
 
 
-  #_(assoc reframe-db :users (conj (:users db) {:id 1}))
 
 
 
@@ -30,7 +30,7 @@
 (def ^:const history-limit 10)
 
 ;; logging of all transactions (prettified)
-(d/listen! frontend.db/conn :log
+(d/listen! db/conn :log
            (fn [tx-report]
              (let [tx-id  (get-in tx-report [:tempids :db/current-tx])
                    datoms (:tx-data tx-report)
@@ -66,12 +66,12 @@
   (prn "##persist")
   (js/localStorage.setItem "datascript-todo/DB" (db->string db)))
 
-(d/listen! frontend.db/conn :persistence
+(d/listen! db/conn :persistence
            (fn [tx-report] ;; FIXME do not notify with nil as db-report
              ;; FIXME do not notify if tx-data is empty
              (prn "## d/listen! persistence")
              (when-let [db (:db-after tx-report)]
-               (js/setTimeout #(persist db) 4000))))
+               (js/setTimeout #(persist db) 0))))
 
 #_(js/localStorage.clear)
 
@@ -82,7 +82,7 @@
 (when-let [stored (js/localStorage.getItem "datascript-todo/DB")]
   (let [stored-db (string->db stored)]
     (prn "------------stored-db: "stored-db)
-    (when (= (:schema stored-db) frontend.db/schema)                    ;; check for code update
+    (when (= (:schema stored-db) db/schema)                    ;; check for code update
       (reset-conn! stored-db)
       #_(swap! history conj @conn)
       true)
