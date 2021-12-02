@@ -1,22 +1,54 @@
 (ns frontend.pages.user.user-list
-  (:require [frontend.db.db :as db]
+  (:require ["@headlessui/react" :refer (Transition)]
+            [reagent.core :as r]
+            [frontend.db.db :as db]
             [frontend.db.user :as db-user]
             [frontend.components.components :as components]
             [frontend.domain.user :as domain-user]
-            [re-frame.core :as re-frame :refer [subscribe dispatch reg-event-fx reg-event-db reg-sub]]))
+            [re-frame.core :as re-frame :refer [subscribe dispatch reg-event-fx reg-event-db reg-sub]]
+            [frontend.utils.tailwind-styles :as styles]))
 
+
+;;;;;;;;;;;;;; TODO cljs interop https://stackoverflow.com/questions/58977738/javascript-to-clojurescript-interop-with-react-spring
+(prn "Transition: "Transition)
 (defn user-page
   []
-  (let [users @(subscribe [:users])]
-    (components/user-list users
-                          {:add-user-fn
-                           (fn []
-                             (let [user (domain-user/generate-user-stub)]
-                               (dispatch [:user.event/add-user user])))
-                           :delete-user-fn
-                           (fn [user-id]
-                             (prn ":delete-user-fn")
-                             (dispatch [:user.event/delete-user user-id]))})))
+  (let [edit? true
+        users @(subscribe [:users])
+
+        showing? (r/atom true)
+        setIsShowing (fn []
+                       (reset! showing? (not @showing?)))]
+
+    (fn []
+      [:div
+       (let []
+         [:div
+          (str "showing?: " @showing?)
+          [:button {:onClick setIsShowing} "button"]
+          [:transition {:show      showing?
+                        :enter     "transition-opacity duration-75"
+                        :enterFrom "opacity-0"
+                        :enterTo   "opacity-100"
+                        :leave     "transition-opacity duration-150"
+                        :leaveFrom "opacity-100"
+                        :leaveTo   "opacity-0"}
+           "I will fade in and out"]])
+
+
+
+       [:div {:class [styles/relative styles/md:flex styles/md:flex-row styles/h-screen styles/bg-white]}
+        [:div {:class [styles/md:flex styles/md:flex-shrink-0 styles/md:overflow-x-auto styles/md:flex-1]}
+         (components/user-list users
+                               {:add-user-fn
+                                (fn []
+                                  (let [user (domain-user/generate-user-stub)]
+                                    (dispatch [:user.event/add-user user])))
+                                :delete-user-fn
+                                (fn [user-id]
+                                  (dispatch [:user.event/delete-user user-id]))})]
+        [:div {:class [styles/md:flex styles/md:flex-col styles/md:min-w-0 styles/md:flex-1]}
+         [components/user-edit]]]])))
 
 
 
