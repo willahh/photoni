@@ -3,5 +3,3 @@
   (:require [rss.domain.rss :refer :all]))
 
 
-
-(s/gen :rss.author/name)
