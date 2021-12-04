@@ -14,3 +14,7 @@
 
 # shadow-cljs cache, port files
 /.shadow-cljs/
+
+/tailwindparser/resources/*.css
+/webapp-frontend/resources/public
+
