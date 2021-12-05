@@ -1,0 +1,14 @@
+version: '3'
+services:
+  photonidb:
+    image: "postgres:13"
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - database.env
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

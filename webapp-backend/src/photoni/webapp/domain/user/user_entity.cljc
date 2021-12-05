@@ -8,21 +8,19 @@
 (def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
 (s/def :generic-type/email (s/and string? #(re-matches email-regex %)))
 
-(s/def :user/id nat-int?)
+(s/def :user/id uuid?)
 (s/def :user/name (s/with-gen (s/and string? not-empty) #(s/gen samples-data/user-name)))
 (s/def :user/title (s/with-gen (s/and string? not-empty) #(s/gen samples-data/job-title)))
 (s/def :user/role string?)
 (s/def :user/age nat-int?)
 (s/def :user/email (s/with-gen :generic-type/email #(s/gen samples-data/email)))
 
-(s/def :user/user-shared (s/keys :req [:user/name
-                                       :user/title
-                                       :user/email
-                                       :user/role
-                                       :user/age]))
-
-(s/def :user/user (s/merge :user/user-shared
-                           (s/keys :req [:user/id])))
+(s/def :user/user (s/keys :req [:user/id
+                                :user/name
+                                :user/title
+                                :user/email
+                                :user/role
+                                :user/age]))
 
 (defn generate-user-stub []
   (gen/generate (s/gen :user/user)))

@@ -3,12 +3,11 @@
   (:require [clojure.spec.alpha :as s]
             [photoni.webapp.domain.common.validation :as validation]))
 
-(s/def ::user-dto :user/user-shared)
-
 (defn ->user-dto
-  [{:keys [name title email role age]}]
-  {:post [(validation/valid-spec ::user-dto %)]}
-  #:user{:name  name
+  [{:keys [id name title email role age]}]
+  {:post [(validation/valid-spec :user/user %)]}
+  #:user{:id    id
+         :name  name
          :title title
          :email email
          :role  role
