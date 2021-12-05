@@ -1,4 +1,5 @@
-(ns photoni.webapp.domain.user
+(ns photoni.webapp.domain.user.user-entity
+  "User entity"
   (:require [clojure.spec.alpha :as s]
             [clojure.test.check.generators]
             [clojure.spec.gen.alpha :as gen]
@@ -14,12 +15,14 @@
 (s/def :user/age nat-int?)
 (s/def :user/email (s/with-gen :generic-type/email #(s/gen samples-data/email)))
 
-(s/def :user/user (s/keys :req [:user/id
-                                :user/name
-                                :user/title
-                                :user/email
-                                :user/role
-                                :user/age]))
+(s/def :user/user-shared (s/keys :req [:user/name
+                                       :user/title
+                                       :user/email
+                                       :user/role
+                                       :user/age]))
+
+(s/def :user/user (s/merge :user/user-shared
+                           (s/keys :req [:user/id])))
 
 (defn generate-user-stub []
   (gen/generate (s/gen :user/user)))
@@ -27,12 +30,12 @@
 (comment
   "Some tests"
   (generate-user-stub)
-  => #:user{:id 126,
-            :name "barelyplonker",
+  => #:user{:id    126,
+            :name  "barelyplonker",
             :title "Marketing Manager",
             :email "konit@aol.com",
-            :role "KtW604pWpq2Krs730K6",
-            :age 1284658}
+            :role  "KtW604pWpq2Krs730K6",
+            :age   1284658}
 
   )
 
