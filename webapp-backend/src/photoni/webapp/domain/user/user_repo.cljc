@@ -3,5 +3,5 @@
 
 (defprotocol UserRepository
   (add-user [user-repo user-dto])
-  (get-user [user-repo user-id])
-  (delete-user [user-repo user-id]))
+  (get-user-by-user-id [user-repo user-id])
+  (delete-user-by-user-id [user-repo user-id]))

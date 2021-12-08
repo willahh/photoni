@@ -13,16 +13,15 @@
       (swap! records assoc user-id user-entity)
       (log/info (str "User " user-id "entity added"))
       user-entity))
-  (get-user [user-repo user-id]
+  (get-user-by-user-id [user-repo user-id]
     (let [user-entity (get @records user-id)]
       user-entity))
-  (delete-user [user-repo user-id]
+  (delete-user-by-user-id [user-repo user-id]
     (swap! records dissoc user-id)
     user-id))
 
 
 (comment
-
 
   )
 

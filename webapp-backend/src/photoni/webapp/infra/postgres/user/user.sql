@@ -27,6 +27,12 @@ INSERT INTO "users" (user_id, name, title, email, role, age, updated_by)
 -- :name select-users :? :*
 SELECT * FROM "users";
 
+-- :name select-user-by-id :? :1
+SELECT * FROM "users" WHERE user_id = :user-id;
+
+-- :name delete-user-by-id :? :1
+DELETE FROM "users" WHERE user_id = :user-id;
+
 
 
 
