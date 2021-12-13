@@ -7,9 +7,9 @@
 
 (defrecord UserInmemoryRepository []
   user-repo/UserRepository
-  (add-user [user-repo user-dto]
+  (add-user [user-repo user-fields]
     (let [user-id (str (java.util.UUID/randomUUID))
-          user-entity (assoc user-dto :user/id user-id)]
+          user-entity (assoc user-fields :user/id user-id)]
       (swap! records assoc user-id user-entity)
       (log/info (str "User " user-id "entity added"))
       user-entity))

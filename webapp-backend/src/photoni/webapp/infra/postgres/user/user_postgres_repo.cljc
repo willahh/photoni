@@ -1,8 +1,7 @@
 (ns photoni.webapp.infra.postgres.user.user-postgres-repo
-  "User adapter"
+  "User adapter - Postgres repository"
   (:require [clojure.java.jdbc :as j]
             [photoni.webapp.domain.common.log :as log]
-            [photoni.webapp.domain.user.user-dto :as user-dto]
             [hugsql.core :as hugsql]
             [photoni.webapp.domain.user.user-repo :as user-repo]
             [photoni.webapp.infra.postgres.db-postgres :refer [db]]
@@ -11,7 +10,7 @@
 (hugsql/def-db-fns "photoni/webapp/infra/postgres/user/user.sql")
 
 
-(defn user-dto->user-db
+(defn user-fields->user-db
   [{:user/keys [id name title email role age] :as user-domain}]
   {:user-id    id
    :updated-by "user2"
@@ -33,8 +32,8 @@
 
 (defrecord UserPostgresRepository []
   user-repo/UserRepository
-  (add-user [user-repo user-dto]
-    (let [user-db-row (user-dto->user-db user-dto)]
+  (add-user [user-repo user-fields]
+    (let [user-db-row (user-fields->user-db user-fields)]
       (upsert-user db user-db-row)))
   (get-user-by-user-id [user-repo user-id]
     (user-db->user-domain (select-user-by-id db {:user-id user-id})))

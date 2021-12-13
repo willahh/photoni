@@ -5,14 +5,13 @@
 
 (s/def :user.command/name keyword?)
 (s/def :user.command/test string?)
-(s/def :user.command/command :user/user)
-(s/def :user.command/user-command (s/keys :req-un [:user.command/name
-                                                   :user.command/test
-                                                   :user.command/command]))
+(s/def :user.command/fields :user/user)
+(s/def :user.command/user-command (s/keys :req [:user.command/name
+                                                :user.command/fields]))
 (defn create-user-command
   [{:keys [id name title email role age]}]
   (command/->command ::create-user-command
-                     :command/user-command
+                     :user.command/user-command
                      #:user{:id    id
                             :name  name
                             :title title
@@ -20,17 +19,3 @@
                             :role  role
                             :age   age}))
 
-;
-;(s/def :command/name keyword?)
-;(s/def :command/fields :user/user)
-;(s/def :command/user-command (s/keys :req [:command/name :command/fields]))
-
-(comment
-  (require '[clojure.spec.gen.alpha :as gen])
-  (gen/generate (s/gen :user.command/user-command))
-  (create-user-command {:id    (java.util.UUID/randomUUID)
-                        :name  "User"
-                        :title "Title"
-                        :email "user@email.com"
-                        :role  "role1"
-                        :age   24}))
