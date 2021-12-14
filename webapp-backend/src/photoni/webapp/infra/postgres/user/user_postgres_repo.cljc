@@ -1,6 +1,7 @@
 (ns photoni.webapp.infra.postgres.user.user-postgres-repo
   "User adapter - Postgres repository"
   (:require [clojure.java.jdbc :as j]
+            [mount.core :refer [defstate]]
             [photoni.webapp.domain.common.log :as log]
             [hugsql.core :as hugsql]
             [photoni.webapp.domain.user.user-repo :as user-repo]
@@ -29,61 +30,16 @@
          :role  role
          :age   age})
 
-
 (defrecord UserPostgresRepository []
   user-repo/UserRepository
   (add-user [user-repo user-fields]
     (let [user-db-row (user-fields->user-db user-fields)]
       (upsert-user db user-db-row)))
   (get-user-by-user-id [user-repo user-id]
-    (user-db->user-domain (select-user-by-id db {:user-id user-id})))
+    (when-let [user-db (select-user-by-id db {:user-id user-id})]
+      (user-db->user-domain user-db)))
   (delete-user-by-user-id [user-repo user-id]
-    (delete-user-by-id db {:user-id user-id})
-    user-id))
+    (delete-user-by-id db {:user-id user-id})))
 
-(comment
-  (def user-postgres-repository (->UserPostgresRepository))
-
-  (def uuid (java.util.UUID/randomUUID))
-  (user-repo/add-user user-postgres-repository
-                      {:id    uuid
-                       :name  "Name"
-                       :title "Title"
-                       :email "user@email.com"
-                       :role  "role"
-                       :age   24})
-  (user-repo/get-user-by-user-id user-postgres-repository
-                                 uuid)
-
-  (user-repo/delete-user-by-user-id user-postgres-repository
-                                    uuid)
-
-
-
-
-
-  (create-users-table db)
-
-  (upsert-user db {:user-id    uuid
-                   :updated-by "user2"
-                   :name       "barelyplonker",
-                   :title      "Marketing Manager",
-                   :email      "konit@aol.com",
-                   :role       "KtW604pWpq2Krs730K6",
-                   :age        1284658})
-
-
-
-
-
-
-
-  (create-characters-table db)
-  (character-by-id db {:id 1})
-  (characters-by-ids-specify-cols-sqlvec db
-                                         {:ids [1 2], :cols ["name" "specialty"]})
-
-  (j/db-do-commands db "drop table test")
-  (create-characters-table db)
-
-  )
+(defstate user-postgres-repository
+  :start (->UserPostgresRepository))

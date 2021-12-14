@@ -1,13 +1,10 @@
 (ns photoni.webapp.domain.user.user-service-test
   (:require [clojure.test :refer [deftest is testing]]
-            [photoni.webapp.infra.inmem.eventbus-inmem-repo :as eventbus-inmem-repo]
-            [photoni.webapp.infra.inmem.user-inmem-repo :as user-inmem-repo]
+            [photoni.webapp.infra.inmem.eventbus-inmem-repo :refer [event-bus-inmem]]
+            [photoni.webapp.infra.inmem.user-inmem-repo :refer [user-repository-inmem]]
             [photoni.webapp.domain.user.user-service :as user-service]
             [photoni.webapp.domain.user.user-command :as user-command]
             [photoni.webapp.domain.user.user-query :as user-query]))
-
-(def user-repo-inmem (user-inmem-repo/->UserInmemoryRepository))
-(def event-bus-inmem (eventbus-inmem-repo/->EventBusInMemory))
 
 (deftest scenario-add-retrieve-and-delete-user-test
   (let [user-id (java.util.UUID/randomUUID)
@@ -17,15 +14,15 @@
                                                             :email "user@email.com"
                                                             :role  "role1"
                                                             :age   24})
-        _ (user-service/add-user add-user-command user-repo-inmem event-bus-inmem)
-        user-retrieved (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-repo-inmem event-bus-inmem)]
+        _ (user-service/add-user add-user-command user-repository-inmem event-bus-inmem)
+        user-retrieved (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-repository-inmem event-bus-inmem)]
 
     (testing "Test user retrieved identity"
-      (is (= add-user-command
-             (dissoc user-retrieved :user/id))))
+      (is (= (get-in add-user-command [:user.command/fields])
+             user-retrieved)))
 
     (testing "Delete retrieved user then retrieved it again should return nil"
-      (user-service/delete-user user-repo-inmem user-id event-bus-inmem)
+      (user-service/delete-user (user-command/delete-user-by-user-id-command user-id) user-repository-inmem event-bus-inmem)
       (is (= nil
-             (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-repo-inmem event-bus-inmem))))))
+             (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-repository-inmem event-bus-inmem))))))
 

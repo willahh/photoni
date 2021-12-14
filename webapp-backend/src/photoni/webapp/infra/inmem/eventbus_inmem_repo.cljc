@@ -1,5 +1,6 @@
 (ns photoni.webapp.infra.inmem.eventbus-inmem-repo
-  (:require [photoni.webapp.domain.common.log :as log]
+  (:require [mount.core :refer [defstate]]
+            [photoni.webapp.domain.common.log :as log]
             [photoni.webapp.domain.common.event-bus :as event-bus]))
 
 (defrecord EventBusInMemory []
@@ -9,4 +10,5 @@
   (publish! [_ event]
     (log/info "Publish event" event)))
 
-
+(defstate event-bus-inmem
+          :start (->EventBusInMemory))

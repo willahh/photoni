@@ -12,7 +12,7 @@ create table if not exists users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 
--- :name upsert-user :<!
+-- :name upsert-user :! :n
 INSERT INTO "users" (user_id, name, title, email, role, age, updated_by)
     VALUES (:user-id, :name, :title, :email, :role, :age, :updated-by)
     ON CONFLICT (user_id)
@@ -30,7 +30,7 @@ SELECT * FROM "users";
 -- :name select-user-by-id :? :1
 SELECT * FROM "users" WHERE user_id = :user-id;
 
--- :name delete-user-by-id :? :1
+-- :name delete-user-by-id :! :n
 DELETE FROM "users" WHERE user_id = :user-id;
 
 

@@ -1,29 +1,30 @@
 (ns photoni.webapp.infra.inmem.user-inmem-repo
   "User adapter"
   (:require [photoni.webapp.domain.common.log :as log]
-            [photoni.webapp.domain.user.user-repo :as user-repo]))
+            [photoni.webapp.domain.user.user-repo :as user-repo]
+            [mount.core :refer [defstate]]))
 
 (def records (atom {}))
 
 (defrecord UserInmemoryRepository []
   user-repo/UserRepository
   (add-user [user-repo user-fields]
-    (let [user-id (str (java.util.UUID/randomUUID))
+    (let [user-id (get user-fields :user/id)
           user-entity (assoc user-fields :user/id user-id)]
       (swap! records assoc user-id user-entity)
-      (log/info (str "User " user-id "entity added"))
-      user-entity))
+      (log/info (str "User " user-id "entity added"))))
   (get-user-by-user-id [user-repo user-id]
     (let [user-entity (get @records user-id)]
       user-entity))
   (delete-user-by-user-id [user-repo user-id]
     (swap! records dissoc user-id)
-    user-id))
+    (log/info (str "User " user-id "entity deleted"))))
+
+(defstate user-repository-inmem
+  :start (->UserInmemoryRepository))
 
 
-(comment
 
-  )
 
 
 
