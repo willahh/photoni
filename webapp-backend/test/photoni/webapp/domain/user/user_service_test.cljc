@@ -26,3 +26,30 @@
       (is (= nil
              (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-repository-inmem event-bus-inmem))))))
 
+
+
+
+(comment
+  (require '[photoni.webapp.domain.user.user-command :as user-command])
+  (require '[photoni.webapp.infra.inmem.eventbus-inmem-repo :refer [event-bus-inmem]])
+  (require '[photoni.webapp.infra.inmem.user-inmem-repo :refer [user-repository-inmem]])
+  (require '[photoni.webapp.infra.postgres.user.user-postgres-repo :refer [user-postgres-repository]])
+
+  (require '[clojure.spec.alpha :as s])
+  (require '[clojure.spec.gen.alpha :as gen])
+
+
+
+
+  (let [user-id (java.util.UUID/randomUUID)]
+    (do "Generate a random user"
+        (let [cmd (gen/generate (s/gen :user.command/user-command))
+              cmd (update-in cmd [:user.command/fields :user/id] (constantly user-id))]
+          (add-user cmd
+                    user-postgres-repository event-bus-inmem)))
+    (do "Delete user"
+        (let [cmd (gen/generate (s/gen :delete-user-by-user-id-command/user-command))]
+          (add-user cmd
+                    user-postgres-repository event-bus-inmem))))
+
+  )

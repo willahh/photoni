@@ -2,10 +2,16 @@
  :mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
              "clojars" {:url "https://repo.clojars.org/"}}
  :deps      {org.clojure/clojure            {:mvn/version "1.10.3"}
+             org.clojure/tools.namespace    {:mvn/version "1.1.0"}
              clojure.jdbc/clojure.jdbc-c3p0 {:mvn/version "0.3.3"}
              org.postgresql/postgresql      {:mvn/version "42.2.10"}
              com.layerware/hugsql           {:mvn/version "0.5.1"}
-             mount/mount                    {:mvn/version "0.1.16"}}
+             mount/mount                    {:mvn/version "0.1.16"}
+             compojure/compojure            {:mvn/version "1.6.1"}
+             ring/ring-devel                {:mvn/version "1.7.1"}
+             ring/ring-jetty-adapter        {:mvn/version "1.7.1"}
+             metosin/reitit                 {:mvn/version "0.3.9"}
+             expound/expound                {:mvn/version "0.8.9"}}
  :aliases   {:test {:extra-paths ["test"]
                     :extra-deps  {org.clojure/test.check {:mvn/version "0.10.0"}
                                   midje/midje            {:mvn/version "1.10.5"}

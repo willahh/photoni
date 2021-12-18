@@ -4,6 +4,7 @@
             [photoni.webapp.domain.common.validation :as validation]))
 
 (s/def :user.command/name keyword?)
+(s/def :user.command/name (s/with-gen keyword? #(s/gen #{:photoni.webapp.domain.user.user-command/create-user-command})))
 (s/def :user.command/fields :user/user)
 (s/def :user.command/user-command (s/keys :req [:user.command/name
                                                 :user.command/fields]))
@@ -20,7 +21,7 @@
 
 
 
-(s/def :delete-user-by-user-id-command/name keyword?)
+(s/def :delete-user-by-user-id-command/name (s/with-gen keyword? #(s/gen #{::delete-user-by-user-id-command})))
 (s/def :delete-user-by-user-id-command/fields (s/keys :req [:user/id]))
 (s/def :delete-user-by-user-id-command/user-command (s/keys :req [:delete-user-by-user-id-command/name
                                                                   :delete-user-by-user-id-command/fields]))
