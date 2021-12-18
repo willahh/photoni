@@ -1,5 +1,5 @@
 # Scripts
-Scripts are made with Babashka command lines utility : https://github.com/babashka/babashka#installation
+Scripts are made with Babashka command line utility : https://github.com/babashka/babashka#installation
 
 ## Installation
 ```shell
