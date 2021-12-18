@@ -12,3 +12,12 @@
   (query/->query ::get-user-by-id-query
                  :user.query/user-query
                  #:user{:id user-id}))
+
+
+(s/def :query.get-users/name keyword?)
+(s/def :query.get-users/get-users (s/keys :req [:query.get-users/name]))
+(defn get-users
+  []
+  (query/->query ::get-users
+                 :query.get-users/get-users))
+

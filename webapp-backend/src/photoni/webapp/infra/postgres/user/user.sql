@@ -12,7 +12,7 @@ create table if not exists users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 
--- :name upsert-user :! :n
+-- :name upsert-user :insert :raw
 INSERT INTO "users" (user_id, name, title, email, role, age, updated_by)
     VALUES (:user-id, :name, :title, :email, :role, :age, :updated-by)
     ON CONFLICT (user_id)

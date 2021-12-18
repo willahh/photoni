@@ -7,29 +7,33 @@
             [photoni.webapp.infra.postgres.user.user-postgres-repo :refer [user-postgres-repository]]
             [photoni.webapp.domain.user.user-entity :as user-entity]
             [photoni.webapp.domain.user.user-service :as user-service]
-            [photoni.webapp.domain.user.user-query :as user-query]))
+            [photoni.webapp.domain.user.user-query :as user-query]
+            [photoni.webapp.domain.user.user-command :as user-command]))
+
+(s/def ::user-id (st/spec {:spec                uuid?
+                           :name                "User id"
+                           :description         "UUID"
+                           :json-schema/default #uuid"fe25b88a-088f-4f46-a8bb-1c9f0131b6c2"}))
 
 
-(s/def ::total int?)
-(s/def ::users-response (s/keys :req-un [::total]))
+;; ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+;; │ GET users                                                                                  │
+;; └────────────────────────────────────────────────────────────────────────────────────────────┘
+(s/def ::users-response (s/coll-of :user/user))
 (def api-users-get-users
   {:summary     "List of users"
    :description "A description of users endpoint"
    :tags        #{tags/users}
    :responses   {200 {:body ::users-response}}
    :handler     (fn [{{{:keys [x y]} :query} :parameters}]
-                  (prn "usrs list")
-                  {:status 200
-                   :body   {:total (+ x y)}})})
+                  (let [users-entities (user-service/get-users (user-query/get-users) user-postgres-repository event-bus-inmem)]
+                    {:status 200
+                     :body   users-entities}))})
 
 
-
-
-
-(s/def ::user-id (st/spec {:spec                uuid?
-                           :name                "User id"
-                           :description         "UUID"
-                           :json-schema/default 42}))
+;; ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+;; │ GET user by user id                                                                        │
+;; └────────────────────────────────────────────────────────────────────────────────────────────┘
 (s/def ::get-user-by-id-request (s/keys :req-un [::user-id]))
 (def api-users-get-user-by-id
   {:summary     "Get user by id"
@@ -38,16 +42,32 @@
    :parameters  {:query ::get-user-by-id-request}
    :responses   {200 {:body :user/user}}
    :handler     (fn [{{{:keys [user-id]} :query} :parameters}]
-                  (prn "user-id" user-id)
-                  (let [user-entity (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-postgres-repository event-bus-inmem)]
-                    (prn "user-entity:" user-entity)
+                  (let [query (user-query/get-user-by-id-query user-id)
+                        user-entity (user-service/get-user-by-id query user-postgres-repository event-bus-inmem)]
                     {:status 200
                      :body   user-entity}))})
 
 
+;; ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+;; │ DELETE user by user id                                                                     │
+;; └────────────────────────────────────────────────────────────────────────────────────────────┘
+(s/def ::delete-user-by-id-request (s/keys :req-un [::user-id]))
+(def api-users-delete-user-by-id
+  {:summary     "Delete user by user id"
+   :description ""
+   :tags        #{tags/users tags/DELETE}
+   :parameters  {:query ::delete-user-by-id-request}
+   :responses   {200 {:body {}}}
+   :handler     (fn [{{{:keys [user-id]} :query} :parameters}]
+                  (let [command (user-command/delete-user-by-user-id-command user-id)
+                        _ (user-service/delete-user command user-postgres-repository event-bus-inmem)]
+                    {:status 200
+                     :body   {}}))})
 
 
-
+;; ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+;; │ PUT create user                                                                            │
+;; └────────────────────────────────────────────────────────────────────────────────────────────┘
 (s/def ::x (st/spec {:spec                int?
                      :name                "X parameter"
                      :description         "Description for X parameter"
@@ -59,7 +79,7 @@
 (def api-users-create-user
   {:summary     "Create an user"
    :description "Create an user"
-   :tags        #{tags/users}
+   :tags        #{tags/users tags/PUT}
    :parameters  {:query ::create-user-request}
    :responses   {200 {:body ::create-user-response}}
    :handler     (fn [{{{:keys [x y]} :query} :parameters}]
@@ -68,13 +88,14 @@
                    :body   {:total (+ x y)}})})
 
 
-
-
-
+;; ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+;; │ Routes aggregate                                                                           │
+;; └────────────────────────────────────────────────────────────────────────────────────────────┘
 (def routes-aggregate
   ["/api/users"
    [["/"
      {:get api-users-get-users}]
     ["/:user-id"
-     {:get  api-users-get-user-by-id
-      :post api-users-create-user}]]])
+     {:get    api-users-get-user-by-id
+      :post   api-users-create-user
+      :delete api-users-delete-user-by-id}]]])

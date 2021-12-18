@@ -8,11 +8,14 @@
 
 (defrecord UserInmemoryRepository []
   user-repo/UserRepository
+  (get-users [user-repo]
+    (vals @records))
   (add-user [user-repo user-fields]
     (let [user-id (get user-fields :user/id)
           user-entity (assoc user-fields :user/id user-id)]
       (swap! records assoc user-id user-entity)
-      (log/info (str "User " user-id "entity added"))))
+      (log/info (str "User " user-id "entity added"))
+      (get @records user-id)))
   (get-user-by-user-id [user-repo user-id]
     (let [user-entity (get @records user-id)]
       user-entity))
@@ -22,10 +25,5 @@
 
 (defstate user-repository-inmem
   :start (->UserInmemoryRepository))
-
-
-
-
-
 
 

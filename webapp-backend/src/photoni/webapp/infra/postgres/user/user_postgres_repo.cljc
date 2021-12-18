@@ -32,9 +32,12 @@
 
 (defrecord UserPostgresRepository []
   user-repo/UserRepository
+  (get-users [user-repo]
+    (map user-db->user-domain (select-users db)))
   (add-user [user-repo user-fields]
-    (let [user-db-row (user-fields->user-db user-fields)]
-      (upsert-user db user-db-row)))
+    (let [insert-db-row (upsert-user db (user-fields->user-db user-fields))]
+      (when insert-db-row
+        (user-db->user-domain insert-db-row))))
   (get-user-by-user-id [user-repo user-id]
     (when-let [user-db (select-user-by-id db {:user-id user-id})]
       (user-db->user-domain user-db)))
