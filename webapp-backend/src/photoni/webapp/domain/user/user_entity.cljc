@@ -22,21 +22,14 @@
                                 :user/role
                                 :user/age]))
 
+(defn ->user
+  [{:keys [id name title email role age] :as fields}]
+  #:user{:id    id
+         :name  name
+         :title title
+         :email email
+         :role  role
+         :age   age})
+
 (defn generate-user-stub []
   (gen/generate (s/gen :user/user)))
-
-(comment
-  "Some tests"
-  (generate-user-stub)
-  => #:user{:id    126,
-            :name  "barelyplonker",
-            :title "Marketing Manager",
-            :email "konit@aol.com",
-            :role  "KtW604pWpq2Krs730K6",
-            :age   1284658}
-
-  )
-
-
-
-

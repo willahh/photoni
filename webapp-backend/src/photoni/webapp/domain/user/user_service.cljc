@@ -1,33 +1,29 @@
 (ns photoni.webapp.domain.user.user-service
   (:require [photoni.webapp.domain.common.event-bus :as event-bus]
-            [photoni.webapp.domain.user.user-repo :as user-repo]
-            [photoni.webapp.domain.user.user-event :as user-event]))
+            [photoni.webapp.domain.user.user-repository-protocol :as user-repository-protocol]
+            [photoni.webapp.domain.user.user-event :as user-event]
+            [photoni.webapp.domain.user.user-command :as user-command]
+            [photoni.webapp.domain.user.user-command-handler :as user-command-handler]))
 
 (defn get-users
   [get-users-query user-repo event-bus]
-  (let [users-entities (user-repo/get-users user-repo)
+  (let [users-entities (user-repository-protocol/get-users user-repo)
         event (user-event/users-retrieved-event get-users-query users-entities)]
     (event-bus/publish! event-bus event)
     users-entities))
 
 (defn get-user-by-id
   [get-user-query user-repo event-bus]
-  (let [user-id (get-in get-user-query [:user.query/fields :user/id])
-        user-entity (user-repo/get-user-by-user-id user-repo user-id)
+  (let [user-id (get-in get-user-query [:query.user.get-user-by-id/fields :user/id])
+        user-entity (user-repository-protocol/get-user-by-user-id user-repo user-id)
         event (user-event/user-retrieved-event get-user-query user-entity)]
     (event-bus/publish! event-bus event)
     user-entity))
 
-(defn add-user
-  [add-user-command user-repo event-bus]
-  (let [user-fields (:user.command/fields add-user-command)
-        user-entity (user-repo/add-user user-repo user-fields)
-        event (user-event/user-added-event add-user-command user-entity)]
-    (event-bus/publish! event-bus event)))
+(defn create-user
+  [create-user-command user-repo event-bus]
+  (user-command-handler/create-user-command-handler create-user-command user-repo event-bus))
 
 (defn delete-user
-  [command user-repo event-bus]
-  (let [user-id (get-in command [:delete-user-by-user-id-command/fields :user/id])
-        _ (user-repo/delete-user-by-user-id user-repo user-id)
-        event (user-event/user-deleted-event command)]
-    (event-bus/publish! event-bus event)))
+  [delete-user-by-user-id-command user-repo event-bus]
+  (user-command-handler/delete-user-command-handler delete-user-by-user-id-command user-repo event-bus))

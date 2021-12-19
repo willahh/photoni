@@ -1,6 +1,6 @@
 (ns photoni.webapp.infra.inmem.user-inmem-repo-test
   (:require [clojure.test :refer [deftest is testing]]
-            [photoni.webapp.domain.user.user-repo :as user-repo]
+            [photoni.webapp.domain.user.user-repository-protocol :as user-repo]
             [photoni.webapp.infra.inmem.eventbus-inmem-repo :refer [event-bus-inmem]]
             [photoni.webapp.infra.inmem.user-inmem-repo :refer [user-repository-inmem]]))
 

@@ -3,21 +3,27 @@
             [photoni.webapp.domain.common.query :as query]
             [photoni.webapp.domain.common.validation :as validation]))
 
-(s/def :user.query/name keyword?)
-(s/def :user.query/fields (s/keys :req [:user/id]))
-(s/def :user.query/user-query (s/keys :req [:user.query/name
-                                            :user.query/fields]))
+;; ┌───────────────────────────────────────────────────────────────────────────┐
+;; │ GetUserByIdQuery                                                          │
+;; └───────────────────────────────────────────────────────────────────────────┘
+(s/def :query.user.get-user-by-id/name keyword?)
+(s/def :query.user.get-user-by-id/fields (s/keys :req [:user/id]))
+(s/def :query.user.get-user-by-id/query (s/keys :req [:query.user.get-user-by-id/name
+                                                      :query.user.get-user-by-id/fields]))
 (defn get-user-by-id-query
   [user-id]
   (query/->query ::get-user-by-id-query
-                 :user.query/user-query
+                 :query.user.get-user-by-id/query
                  #:user{:id user-id}))
 
 
-(s/def :query.get-users/name keyword?)
-(s/def :query.get-users/get-users (s/keys :req [:query.get-users/name]))
+;; ┌───────────────────────────────────────────────────────────────────────────┐
+;; │ GetUsersQuery                                                             │
+;; └───────────────────────────────────────────────────────────────────────────┘
+(s/def :query.user.get-users/name keyword?)
+(s/def :query.user.get-users/query (s/keys :req [:query.user.get-users/name]))
 (defn get-users
   []
   (query/->query ::get-users
-                 :query.get-users/get-users))
+                 :query.user.get-users/query))
 

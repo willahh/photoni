@@ -16,7 +16,6 @@
     (fn [x]
       (if (keyword? x)
         (do
-          (prn "x:" x)
           (-> x
               str
               (clojure.string/replace #":" "")

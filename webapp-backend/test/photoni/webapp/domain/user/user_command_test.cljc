@@ -5,13 +5,14 @@
 
 (deftest create-user-command-test
   (let [id (java.util.UUID/randomUUID)]
-    (is (= #:user.command{:name   :photoni.webapp.domain.user.user-command/create-user-command,
-                          :fields #:user{:id    id
-                                         :name  "User",
-                                         :title "Title",
-                                         :email "user@email.com",
-                                         :role  "role1",
-                                         :age   24}}
+    (is (= {:type   :photoni.webapp.domain.user.user-command/create-user-command
+            :spec   :command.user.create-user/command
+            :fields #:user{:id    id
+                           :name  "User",
+                           :title "Title",
+                           :email "user@email.com",
+                           :role  "role1",
+                           :age   24}}
            (create-user-command {:id    id
                                  :name  "User"
                                  :title "Title"
@@ -21,6 +22,7 @@
 
 (deftest delete-user-by-user-id-command-test
   (let [id (java.util.UUID/randomUUID)]
-    (is (= #:delete-user-by-user-id-command{:name :photoni.webapp.domain.user.user-command/delete-user-by-user-id-command,
-                                            :fields #:user{:id id}}
+    (is (= {:type   :photoni.webapp.domain.user.user-command/delete-user-by-user-id-command
+            :spec   :command.user.delete-user-by-user-id/command
+            :fields #:user{:id id}}
            (delete-user-by-user-id-command id)))))

@@ -4,7 +4,7 @@
             [mount.core :refer [defstate]]
             [photoni.webapp.domain.common.log :as log]
             [hugsql.core :as hugsql]
-            [photoni.webapp.domain.user.user-repo :as user-repo]
+            [photoni.webapp.domain.user.user-repository-protocol :refer [UserRepositoryProtocol]]
             [photoni.webapp.infra.postgres.db-postgres :refer [db]]
             [photoni.webapp.domain.user.user-entity :as user-entity]))
 
@@ -31,10 +31,11 @@
          :age   age})
 
 (defrecord UserPostgresRepository []
-  user-repo/UserRepository
+  UserRepositoryProtocol
   (get-users [user-repo]
     (map user-db->user-domain (select-users db)))
-  (add-user [user-repo user-fields]
+  (create-user [user-repo user-fields]
+    (prn "add-user user-fields:" user-fields)
     (let [insert-db-row (upsert-user db (user-fields->user-db user-fields))]
       (when insert-db-row
         (user-db->user-domain insert-db-row))))

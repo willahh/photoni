@@ -8,17 +8,17 @@
 
 (deftest scenario-add-retrieve-and-delete-user-test
   (let [user-id (java.util.UUID/randomUUID)
-        add-user-command (user-command/create-user-command {:id    user-id
-                                                            :name  "User"
-                                                            :title "Title"
-                                                            :email "user@email.com"
-                                                            :role  "role1"
-                                                            :age   24})
-        _ (user-service/add-user add-user-command user-repository-inmem event-bus-inmem)
+        create-user-command (user-command/create-user-command {:id    user-id
+                                                               :name  "User"
+                                                               :title "Title"
+                                                               :email "user@email.com"
+                                                               :role  "role1"
+                                                               :age   24})
+        _ (user-service/create-user create-user-command user-repository-inmem event-bus-inmem)
         user-retrieved (user-service/get-user-by-id (user-query/get-user-by-id-query user-id) user-repository-inmem event-bus-inmem)]
 
     (testing "Test user retrieved identity"
-      (is (= (get-in add-user-command [:user.command/fields])
+      (is (= (get-in create-user-command [:fields])
              user-retrieved)))
 
     (testing "Delete retrieved user then retrieved it again should return nil"
@@ -30,22 +30,22 @@
 
 
 (deftest scenario-add-users-then-get-users-test
-  (let [user-1 (user-service/add-user (user-command/create-user-command
-                                        {:id    (java.util.UUID/randomUUID)
-                                         :name  "User 1"
-                                         :title "Title"
-                                         :email "user@email.com"
-                                         :role  "role1"
-                                         :age   24})
-                                      user-repository-inmem event-bus-inmem)
-        user-2 (user-service/add-user (user-command/create-user-command
-                                        {:id    (java.util.UUID/randomUUID)
-                                         :name  "User 2"
-                                         :title "Title"
-                                         :email "user@email.com"
-                                         :role  "role1"
-                                         :age   24})
-                                      user-repository-inmem event-bus-inmem)]
+  (let [user-1 (user-service/create-user (user-command/create-user-command
+                                           {:id    (java.util.UUID/randomUUID)
+                                            :name  "User 1"
+                                            :title "Title"
+                                            :email "user@email.com"
+                                            :role  "role1"
+                                            :age   24})
+                                         user-repository-inmem event-bus-inmem)
+        user-2 (user-service/create-user (user-command/create-user-command
+                                           {:id    (java.util.UUID/randomUUID)
+                                            :name  "User 2"
+                                            :title "Title"
+                                            :email "user@email.com"
+                                            :role  "role1"
+                                            :age   24})
+                                         user-repository-inmem event-bus-inmem)]
     (is (= [user-1 user-2]
            (user-service/get-users (user-query/get-users)
                                    user-repository-inmem event-bus-inmem)))))

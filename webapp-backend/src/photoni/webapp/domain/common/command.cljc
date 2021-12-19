@@ -4,8 +4,8 @@
             [photoni.webapp.domain.user.user-entity]))
 
 (defn ->command
-  [command-name command-spec command-fields]
+  [command-type command-spec command-fields]
   {:post [(validation/valid-spec command-spec %)]}
-  (map->nsmap {:name   command-name
-               :fields command-fields}
-              (namespace command-spec)))
+  {:type   command-type
+   :spec   command-spec
+   :fields command-fields})

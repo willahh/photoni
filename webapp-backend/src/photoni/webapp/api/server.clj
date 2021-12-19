@@ -35,7 +35,12 @@
 
 
 
-
+(defn coercion-error-handler [status]
+  (let [printer (expound/custom-printer {:theme :figwheel-theme, :print-specs? false})
+        handler (exception/create-coercion-handler status)]
+    (fn [exception request]
+      (printer (-> exception ex-data :problems))
+      (handler exception request))))
 
 
 
@@ -46,6 +51,28 @@
            :handler (swagger/create-swagger-handler)}}]
    users-routes/routes-aggregate])
 
+(def new-muuntaja-instance
+  (m/create
+    (assoc-in
+      m/default-options
+      [:formats "application/json" :decoder-opts :bigdecimals]
+      true)))
+
+(def muuntaja-instance2
+  (m/create
+    (assoc-in
+      m/default-options
+      [:formats "application/json" :encoder-opts]
+      {:date-format "yyyy-MM-dd"})))
+
+
+(def exception-middleware
+  (exception/create-exception-middleware
+    (merge
+      exception/default-handlers
+      {:reitit.coercion/request-coercion (coercion-error-handler 400)
+       :reitit.coercion/response-coercion (coercion-error-handler 500)})))
+
 (def opts {;;:reitit.middleware/transform dev/print-request-diffs ;; pretty diffs
            ;;:validate spec/validate ;; enable spec validation for route data
            ;;:reitit.spec/wrap spell/closed ;; strict top-level validation
@@ -53,7 +80,7 @@
            :exception pretty/exception
            :syntax    :bracket
            :data      {:coercion   reitit.coercion.spec/coercion
-                       :muuntaja   m/instance
+                       :muuntaja   muuntaja-instance2
                        :middleware [;; swagger feature
                                     swagger/swagger-feature
                                     ;; query-params & form-params
@@ -63,15 +90,24 @@
                                     ;; encoding response body
                                     muuntaja/format-response-middleware
                                     ;; exception handling
-                                    exception/exception-middleware
+                                    ;;exception/exception-middleware
                                     ;; decoding request body
                                     muuntaja/format-request-middleware
+
+
+
+                                    ;; exception handling
+                                    exception-middleware
                                     ;; coercing response bodys
                                     coercion/coerce-response-middleware
                                     ;; coercing request parameters
                                     coercion/coerce-request-middleware
+
+
+
                                     ;; multipart
                                     multipart/multipart-middleware]}})
+
 
 (def default-handler (ring/routes
                        (swagger-ui/create-swagger-ui-handler

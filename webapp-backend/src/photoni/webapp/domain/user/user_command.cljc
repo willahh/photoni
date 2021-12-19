@@ -1,17 +1,19 @@
 (ns photoni.webapp.domain.user.user-command
   (:require [clojure.spec.alpha :as s]
-            [photoni.webapp.domain.common.command :as command]
-            [photoni.webapp.domain.common.validation :as validation]))
+            [photoni.webapp.domain.common.command :as command]))
 
-(s/def :user.command/name keyword?)
-(s/def :user.command/name (s/with-gen keyword? #(s/gen #{:photoni.webapp.domain.user.user-command/create-user-command})))
-(s/def :user.command/fields :user/user)
-(s/def :user.command/user-command (s/keys :req [:user.command/name
-                                                :user.command/fields]))
+;; ┌───────────────────────────────────────────────────────────────────────────┐
+;; │ CreateUserCommand                                                         │
+;; └───────────────────────────────────────────────────────────────────────────┘
+(s/def :command.user.create-user/type (s/with-gen keyword? #(s/gen #{:photoni.webapp.domain.user.user-command/create-user-command})))
+(s/def :command.user.create-user/fields :user/user)
+(s/def :command.user.create-user/command (s/keys :req-un [:command.user.create-user/type
+                                                          :command.user.create-user/fields]))
+
 (defn create-user-command
-  [{:keys [id name title email role age]}]
+  [{:keys [id name title email role age] :as fields}]
   (command/->command ::create-user-command
-                     :user.command/user-command
+                     :command.user.create-user/command
                      #:user{:id    id
                             :name  name
                             :title title
@@ -20,14 +22,16 @@
                             :age   age}))
 
 
-
-(s/def :delete-user-by-user-id-command/name (s/with-gen keyword? #(s/gen #{::delete-user-by-user-id-command})))
-(s/def :delete-user-by-user-id-command/fields (s/keys :req [:user/id]))
-(s/def :delete-user-by-user-id-command/user-command (s/keys :req [:delete-user-by-user-id-command/name
-                                                                  :delete-user-by-user-id-command/fields]))
+;; ┌───────────────────────────────────────────────────────────────────────────┐
+;; │ DeleteUserByUserIdCommand                                                 │
+;; └───────────────────────────────────────────────────────────────────────────┘
+(s/def :command.user.delete-user-by-user-id/type (s/with-gen keyword? #(s/gen #{::delete-user-by-user-id-command})))
+(s/def :command.user.delete-user-by-user-id/fields (s/keys :req [:user/id]))
+(s/def :command.user.delete-user-by-user-id/command (s/keys :req-un [:command.user.delete-user-by-user-id/type
+                                                                     :command.user.delete-user-by-user-id/fields]))
 (defn delete-user-by-user-id-command
   [user-id]
   (command/->command ::delete-user-by-user-id-command
-                     :delete-user-by-user-id-command/user-command
+                     :command.user.delete-user-by-user-id/command
                      #:user{:id user-id}))
 
