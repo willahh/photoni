@@ -35,7 +35,6 @@
   (get-users [user-repo]
     (map user-db->user-domain (select-users db)))
   (create-user [user-repo user-fields]
-    (prn "add-user user-fields:" user-fields)
     (let [insert-db-row (upsert-user db (user-fields->user-db user-fields))]
       (when insert-db-row
         (user-db->user-domain insert-db-row))))

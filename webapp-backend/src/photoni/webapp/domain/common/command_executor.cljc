@@ -1,5 +1,6 @@
 (ns photoni.webapp.domain.common.command-executor
-  (:require [mount.core :refer [defstate]]
+  (:require [photoni.webapp.domain.common.log :as log]
+            [mount.core :refer [defstate]]
             [photoni.webapp.domain.common.state :as state]))
 
 (defn register-command-handler
@@ -8,20 +9,7 @@
 
 (defn execute
   [{:keys [type] :as command}]
-  (let [command-handler (get @state/command-type->command-handler type)]
-    (command-handler command)))
+  (if-let [command-handler (get @state/command-type->command-handler type)]
+    (command-handler command)
+    (log/error {:service ::execute} (str "Unknow command-handler for type : " type))))
 
-(comment
-  (mount.core/start)
-  (require '[photoni.webapp.domain.user.user-command :as user-command])
-
-  (let [fields {:id    #uuid"6550ac0a-34cf-4235-858b-32644a29ea31"
-                :name  "User"
-                :title "Title"
-                :email "user@email.com"
-                :role  "role1"
-                :age   24}
-        add-user-command (user-command/create-user-command fields)]
-    (execute add-user-command))
-
-  )

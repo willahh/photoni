@@ -2,8 +2,10 @@
   "User entity"
   (:require [clojure.spec.alpha :as s]
             [clojure.test.check.generators]
+            [spec-tools.core :as st]
             [clojure.spec.gen.alpha :as gen]
-            [webapp.domain.resources.samples.data :as samples-data]))
+            [webapp.domain.resources.samples.data :as samples-data]
+            [malli.core :as m]))
 
 (def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
 (s/def :generic-type/email (s/and string? #(re-matches email-regex %)))
@@ -21,6 +23,32 @@
                                 :user/email
                                 :user/role
                                 :user/age]))
+
+(def non-empty-string
+  (m/from-ast {:type       :string
+               :properties {:min 1}}))
+
+(def spec-id [:id uuid?])
+(def spec-name [:name {:title "name parameter"
+                       :description "Description for name parameter"
+                       :json-schema/default "User"}
+                [:and string? non-empty-string]])
+(def spec-title [:title [:and string? non-empty-string]])
+(def spec-email [:email {:title "User email"
+                         :description ""
+                         :json-schema/default "user@mail.com"}
+                 [:and string? non-empty-string [:re email-regex]]])
+(def spec-role [:role [:and string? non-empty-string]])
+(def spec-age [:age nat-int?])
+
+(def spec-user
+  [:map
+   spec-id
+   spec-name
+   spec-title
+   spec-email
+   spec-role
+   spec-age])
 
 (defn ->user
   [{:keys [id name title email role age] :as fields}]

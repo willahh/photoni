@@ -9,6 +9,8 @@
 (defstate event-bus
   :start event-bus-inmem)
 
-(defstate command-type->command-handler
+#_(defstate command-type->command-handler
   :start (atom {})
   :stop (fn [] {}))
+
+(def command-type->command-handler (atom {}))
