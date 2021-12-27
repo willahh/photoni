@@ -1,9 +1,9 @@
 (ns photoni.webapp.domain.user.user-command-handler
-  (:require
-    [photoni.webapp.domain.common.command-executor :refer [register-command-handler]]
-    [photoni.webapp.domain.user.user-command :as user-command]
-    [photoni.webapp.domain.user.user-service :as user-service]))
+  (:require [photoni.webapp.domain.common.command-executor :refer [register-command-handler]]
+            [photoni.webapp.domain.user.user-command :as user-command]
+            [photoni.webapp.domain.user.user-service :as user-service]))
 
+;; TODO: Maybe use a macro to generate handlers
 (register-command-handler
   ::user-command/create-user-command
   #(user-service/create-user %))

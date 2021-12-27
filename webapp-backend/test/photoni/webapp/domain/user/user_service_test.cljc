@@ -49,7 +49,7 @@
                                             :role  "role1"
                                             :age   24}))]
     (is (= [user-1 user-2]
-           (user-service/get-users (user-query/get-users))))))
+           (user-service/get-users (user-query/get-users-query))))))
 
 
 

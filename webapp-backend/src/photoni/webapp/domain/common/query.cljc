@@ -4,10 +4,9 @@
             [photoni.webapp.domain.user.user-entity]))
 
 (defn ->query
-  ([query-name query-spec query-fields]
+  ([query-type query-spec query-fields]
    {:post [(validation/valid-spec query-spec %)]}
-   (map->nsmap (cond-> {:name query-name}
-                       query-fields (assoc :fields query-fields))
-               (namespace query-spec)))
-  ([query-name query-spec]
-   (->query query-name query-spec nil)))
+   (cond-> {:type query-type}
+           query-fields (assoc :fields query-fields)))
+  ([query-type query-spec]
+   (->query query-type query-spec nil)))

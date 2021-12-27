@@ -1,8 +1,8 @@
 (ns photoni.webapp.domain.user.user-service
-  (:require [photoni.webapp.domain.common.event-bus :as event-bus]
+  (:require [photoni.webapp.domain.common.state :as state]
+            [photoni.webapp.domain.common.event-bus :as event-bus]
             [photoni.webapp.domain.user.user-repository-protocol :as user-repository-protocol]
-            [photoni.webapp.domain.user.user-event :as user-event]
-            [photoni.webapp.domain.common.state :as state]))
+            [photoni.webapp.domain.user.user-event :as user-event]))
 
 (defn get-users
   [get-users-query]
@@ -13,7 +13,7 @@
 
 (defn get-user-by-id
   [get-user-query]
-  (let [user-id (get-in get-user-query [:query.user.get-user-by-id/fields :user/id])
+  (let [user-id (get-in get-user-query [:fields :user/id])
         user-entity (user-repository-protocol/get-user-by-user-id state/user-repository user-id)
         event (user-event/user-retrieved-event get-user-query user-entity)]
     (event-bus/publish! state/event-bus-repository event)
@@ -30,6 +30,7 @@
 (defn delete-user
   [delete-user-by-user-id-command]
   (let [user-id (get-in delete-user-by-user-id-command [:fields :user/id])
-        _ (user-repository-protocol/delete-user-by-user-id state/user-repository user-id)
+        deleted? (user-repository-protocol/delete-user-by-user-id state/user-repository user-id)
         event (user-event/user-deleted-event delete-user-by-user-id-command)]
-    (event-bus/publish! state/event-bus-repository event)))
+    (event-bus/publish! state/event-bus-repository event)
+    deleted?))

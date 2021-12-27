@@ -2,6 +2,7 @@
   (:require [jdbc.pool.c3p0 :as pool]
             [mount.core :refer [defstate]]))
 
+
 (defstate db :start (pool/make-datasource-spec
                       {:subprotocol "postgresql"
                        :subname     "//localhost:5432/photoni"

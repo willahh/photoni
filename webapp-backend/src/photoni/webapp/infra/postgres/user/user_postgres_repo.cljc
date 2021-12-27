@@ -4,6 +4,7 @@
             [mount.core :refer [defstate]]
             [photoni.webapp.domain.common.log :as log]
             [hugsql.core :as hugsql]
+            [photoni.webapp.infra.postgres.utils :refer [->boolean]]
             [photoni.webapp.domain.user.user-repository-protocol :refer [UserRepositoryProtocol]]
             [photoni.webapp.infra.postgres.db-postgres :refer [db]]
             [photoni.webapp.domain.user.user-entity :as user-entity]))
@@ -42,7 +43,7 @@
     (when-let [user-db (select-user-by-id db {:user-id user-id})]
       (user-db->user-domain user-db)))
   (delete-user-by-user-id [user-repo user-id]
-    (delete-user-by-id db {:user-id user-id})))
+    (->boolean (delete-user-by-id db {:user-id user-id}))))
 
 (defstate user-postgres-repository
   :start (->UserPostgresRepository))

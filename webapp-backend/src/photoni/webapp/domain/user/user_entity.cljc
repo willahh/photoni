@@ -1,28 +1,9 @@
 (ns photoni.webapp.domain.user.user-entity
   "User entity"
-  (:require [clojure.spec.alpha :as s]
-            [clojure.test.check.generators]
-            [spec-tools.core :as st]
-            [clojure.spec.gen.alpha :as gen]
-            [webapp.domain.resources.samples.data :as samples-data]
+  (:require [webapp.domain.resources.samples.data :as samples-data]
             [malli.core :as m]))
 
 (def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
-(s/def :generic-type/email (s/and string? #(re-matches email-regex %)))
-
-(s/def :user/id uuid?)
-(s/def :user/name (s/with-gen (s/and string? not-empty) #(s/gen samples-data/user-name)))
-(s/def :user/title (s/with-gen (s/and string? not-empty) #(s/gen samples-data/job-title)))
-(s/def :user/role string?)
-(s/def :user/age nat-int?)
-(s/def :user/email (s/with-gen :generic-type/email #(s/gen samples-data/email)))
-
-(s/def :user/user (s/keys :req [:user/id
-                                :user/name
-                                :user/title
-                                :user/email
-                                :user/role
-                                :user/age]))
 
 (def non-empty-string
   (m/from-ast {:type       :string
@@ -41,7 +22,10 @@
                               :description         ""
                               :json-schema/default "user@mail.com"}
                  [:and string? non-empty-string [:re email-regex]]])
-(def spec-role [:user/role [:and string? non-empty-string]])
+(def spec-role [:user/role {:title               "Role parameter"
+                            :description         "Description for rle parameter"
+                            :json-schema/default "role/admin"}
+                [:enum "role/admin"]])                      ;; TODO: use keyword here (need to fix api coercion before, not trivial stuff)
 (def spec-age [:user/age nat-int?])
 
 (def spec-user
@@ -62,5 +46,3 @@
          :role  role
          :age   age})
 
-(defn generate-user-stub []
-  (gen/generate (s/gen :user/user)))

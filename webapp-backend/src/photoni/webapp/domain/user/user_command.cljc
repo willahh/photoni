@@ -1,37 +1,41 @@
 (ns photoni.webapp.domain.user.user-command
-  (:require [clojure.spec.alpha :as s]
-            [photoni.webapp.domain.common.command :as command]))
+  (:require [photoni.webapp.domain.common.command :as command]
+            [photoni.webapp.domain.user.user-entity :as user-entity]))
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
 ;; │ CreateUserCommand                                                         │
 ;; └───────────────────────────────────────────────────────────────────────────┘
-(s/def :command.user.create-user/type (s/with-gen keyword? #(s/gen #{:photoni.webapp.domain.user.user-command/create-user-command})))
-(s/def :command.user.create-user/fields :user/user)
-(s/def :command.user.create-user/command (s/keys :req-un [:command.user.create-user/type
-                                                          :command.user.create-user/fields]))
+(def create-user-command-spec
+  [:map
+   [:type [:enum ::create-user-command]]
+   [:fields
+    user-entity/spec-user]])
 
 (defn create-user-command
   [{:keys [id name title email role age] :as fields}]
   (command/->command ::create-user-command
-                     :command.user.create-user/command
+                     create-user-command-spec
                      #:user{:id    id
-                            :name  name
-                            :title title
-                            :email email
-                            :role  role
-                            :age   age}))
+                                  :name  name
+                                  :title title
+                                  :email email
+                                  :role  role
+                                  :age   age}))
 
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
 ;; │ DeleteUserByUserIdCommand                                                 │
 ;; └───────────────────────────────────────────────────────────────────────────┘
-(s/def :command.user.delete-user-by-user-id/type (s/with-gen keyword? #(s/gen #{::delete-user-by-user-id-command})))
-(s/def :command.user.delete-user-by-user-id/fields (s/keys :req [:user/id]))
-(s/def :command.user.delete-user-by-user-id/command (s/keys :req-un [:command.user.delete-user-by-user-id/type
-                                                                     :command.user.delete-user-by-user-id/fields]))
+(def delete-user-by-user-id-command-spec
+  [:map
+   [:type [:enum ::delete-user-by-user-id-command]]
+   [:fields
+    [:map
+     user-entity/spec-id]]])
+
 (defn delete-user-by-user-id-command
   [user-id]
   (command/->command ::delete-user-by-user-id-command
-                     :command.user.delete-user-by-user-id/command
+                     delete-user-by-user-id-command-spec
                      #:user{:id user-id}))
 

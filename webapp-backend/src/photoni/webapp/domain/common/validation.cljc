@@ -1,8 +1,9 @@
 (ns photoni.webapp.domain.common.validation
-  (:require [clojure.spec.alpha :as s]
+  (:require [malli.core :as m]
+            [malli.error :as me]
             [photoni.webapp.domain.common.log :as log]))
 
 (defn valid-spec [spec x]
-  (if (s/valid? spec x)
+  (if (m/validate spec x)
     x
-    (log/info {:service ::valid-spec} (s/explain spec x))))
+    (log/info {:service ::valid-spec} (me/humanize (m/explain spec x)))))

@@ -20,8 +20,60 @@
 
             [mount.core :refer [defstate]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [photoni.webapp.api.external.routes.user :as route-user])
+            [photoni.webapp.api.external.routes.user :as route-user]
+            [photoni.webapp.api.api-utils :as api-utils])
   (:import [org.eclipse.jetty.server Server]))
+
+#_(comment
+  (require '[malli.core :as m])
+  (require '[malli.transform :as mt])
+
+
+
+
+
+
+
+
+
+
+
+
+  (defn json-transformer
+    ([]
+     (json-transformer nil))
+    ([{::keys [json-vectors map-of-key-decoders] :or {map-of-key-decoders (-string-decoders)}}]
+     (transformer
+       {:name :json
+        :decoders (-> (-json-decoders)
+                      (assoc :map-of {:compile (fn [schema _]
+                                                 (or (some-> schema (m/children) (first) (m/type) map-of-key-decoders
+                                                             (m/-comp m/-keyword->string) (-transform-map-keys))
+                                                     (-transform-map-keys m/-keyword->string)))})
+                      (cond-> json-vectors (assoc :vector -sequential->vector)))
+        :encoders (-json-encoders)})))
+
+
+
+  (defn- -provider [transformer]
+    (prn "-provider" transformer)
+    (reify reitit.coercion.malli/TransformationProvider
+      (-transformer [_ {:keys [strip-extra-keys default-values]}]
+        (prn "strip-extra-keys" strip-extra-keys)
+        (prn "default-values" default-values)
+        (mt/transformer
+          (if strip-extra-keys (mt/strip-extra-keys-transformer))
+          transformer
+          (if default-values (mt/default-value-transformer))))))
+
+  (def json-transformer-provider (-provider (mt/json-transformer)))
+
+
+
+
+
+
+  )
 
 (def app
   (ring/ring-handler
@@ -39,12 +91,13 @@
        :exception pretty/exception
        :data      {:coercion   (reitit.coercion.malli/create
                                  {
-
-                                  ;:transformers     {:body     {:default default-transformer-provider
-                                  ;                              :formats {"application/json" json-transformer-provider}}
-                                  ;                   :string   {:default string-transformer-provider}
-                                  ;                   :response {:default default-transformer-provider
-                                  ;                              :formats {"application/json" json-transformer-provider}}}
+                                  ;:transformers     {:body     {:default reitit.coercion.malli/json-transformer-provider
+                                  ;                              ;;:formats {"application/json" reitit.coercion.malli/json-transformer-provider}
+                                  ;                              :formats {"application/json" json-transformer-provider}
+                                  ;
+                                  ;                              }
+                                  ;                   :string   {:default reitit.coercion.malli/string-transformer-provider}
+                                  ;                   :response {:default reitit.coercion.malli/default-transformer-provider}}
 
 
                                   ;; set of keys to include in error messages
