@@ -9,3 +9,7 @@
                               k)]
                  (assoc acc new-kw v)))
              {} m))
+
+(defn set-spec-field-optional
+  [spec-field]
+  (update-in spec-field [1] #(assoc % :optional true)))

@@ -1,7 +1,7 @@
 (ns photoni.webapp.infra.postgres.user.user-postgres-repo-test
   (:require [clojure.test :refer [deftest is testing]]
             [photoni.webapp.domain.user.user-repository-protocol :as user-repo]
-            [photoni.webapp.infra.inmem.eventbus-inmem-repo :refer [event-bus-inmem]]
+            [photoni.webapp.infra.inmem.eventbus-inmem-repo :refer [event-bus-inmem-repository]]
             [photoni.webapp.infra.postgres.user.user-postgres-repo :refer [user-postgres-repository]]))
 
 (deftest add-user-test

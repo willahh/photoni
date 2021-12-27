@@ -10,5 +10,5 @@
   (publish! [_ event]
     (log/info "Publish event" event)))
 
-(defstate event-bus-inmem
+(defstate event-bus-inmem-repository
           :start (->EventBusInMemory))

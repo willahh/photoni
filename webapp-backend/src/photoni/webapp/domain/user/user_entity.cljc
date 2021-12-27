@@ -28,18 +28,21 @@
   (m/from-ast {:type       :string
                :properties {:min 1}}))
 
-(def spec-id [:id uuid?])
-(def spec-name [:name {:title "name parameter"
-                       :description "Description for name parameter"
-                       :json-schema/default "User"}
+(def spec-id [:user/id {:title               "id parameter"
+                        :description         "Description for id parameter"
+                        :json-schema/default "4c0e630d-19f9-47a8-9e89-225dc7c8e338"}
+              uuid?])
+(def spec-name [:user/name {:title               "Name parameter"
+                            :description         "Description for name parameter"
+                            :json-schema/default "User"}
                 [:and string? non-empty-string]])
-(def spec-title [:title [:and string? non-empty-string]])
-(def spec-email [:email {:title "User email"
-                         :description ""
-                         :json-schema/default "user@mail.com"}
+(def spec-title [:user/title [:and string? non-empty-string]])
+(def spec-email [:user/email {:title               "User email"
+                              :description         ""
+                              :json-schema/default "user@mail.com"}
                  [:and string? non-empty-string [:re email-regex]]])
-(def spec-role [:role [:and string? non-empty-string]])
-(def spec-age [:age nat-int?])
+(def spec-role [:user/role [:and string? non-empty-string]])
+(def spec-age [:user/age nat-int?])
 
 (def spec-user
   [:map

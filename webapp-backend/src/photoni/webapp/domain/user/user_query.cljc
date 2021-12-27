@@ -1,7 +1,7 @@
 (ns photoni.webapp.domain.user.user-query
   (:require [clojure.spec.alpha :as s]
-            [photoni.webapp.domain.common.query :as query]
-            [photoni.webapp.domain.common.validation :as validation]))
+            [photoni.webapp.domain.common.query :as query]))
+
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
 ;; │ GetUserByIdQuery                                                          │
@@ -21,6 +21,7 @@
 ;; │ GetUsersQuery                                                             │
 ;; └───────────────────────────────────────────────────────────────────────────┘
 (s/def :query.user.get-users/name keyword?)
+(s/def :query.user.get-users/fields (s/keys :opt [:user/id]))
 (s/def :query.user.get-users/query (s/keys :req [:query.user.get-users/name]))
 (defn get-users
   []
