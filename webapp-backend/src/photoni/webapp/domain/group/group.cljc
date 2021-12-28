@@ -25,14 +25,16 @@
   (m/from-ast {:type       :string
                :properties {:min 1}}))
 
-(def group-id-spec [:group/id {:title         "id parameter"
-                         :description         "Description for id parameter"
-                         :json-schema/default "4c0e630d-19f9-47a8-9e89-225dc7c8e338"}
-              uuid?])
-(def group-name-spec [:group/name {:title         "Name parameter"
-                             :description         "Description for name parameter"
-                             :json-schema/default "User"}
-                [:and string? non-empty-string]])
+(def group-id-spec
+  [:group/id {:title               "id parameter"
+              :description         "Description for id parameter"
+              :json-schema/default "4c0e630d-19f9-47a8-9e89-225dc7c8e338"}
+   uuid?])
+(def group-name-spec
+  [:group/name {:title               "Name parameter"
+                :description         "Description for name parameter"
+                :json-schema/default "User"}
+   [:and string? non-empty-string]])
 
 (def group-spec
   [:map

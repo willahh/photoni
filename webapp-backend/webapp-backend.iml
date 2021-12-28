@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/dev" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -15,7 +16,7 @@
     <orderEntry type="library" name="Deps: joda-time:2.10" level="project" />
     <orderEntry type="library" name="Deps: commons-codec:1.15" level="project" />
     <orderEntry type="library" name="Deps: ring/ring-devel:1.7.1" level="project" />
-    <orderEntry type="library" name="Deps: org.clojure/tools.logging:0.4.1" level="project" />
+    <orderEntry type="library" name="Deps: org.clojure/tools.logging:1.1.0" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/core.specs.alpha:0.2.56" level="project" />
     <orderEntry type="library" name="Deps: metosin/muuntaja:0.6.8" level="project" />
     <orderEntry type="library" name="Deps: marick/suchwow:6.0.2" level="project" />
@@ -41,6 +42,7 @@
     <orderEntry type="library" name="Deps: commons-io:2.10.0" level="project" />
     <orderEntry type="library" name="Deps: org.postgresql/postgresql:42.2.10" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/tools.namespace:1.1.0" level="project" />
+    <orderEntry type="library" name="Deps: com.github.seancorfield/honeysql:2.2.840" level="project" />
     <orderEntry type="library" name="Deps: fipp:0.6.24" level="project" />
     <orderEntry type="library" name="Deps: metosin/reitit-swagger:0.5.15" level="project" />
     <orderEntry type="library" name="Deps: com.fasterxml.jackson.core/jackson-core:2.12.4" level="project" />
@@ -70,6 +72,7 @@
     <orderEntry type="library" name="Deps: borkdude/edamame:0.0.11" level="project" />
     <orderEntry type="library" name="Deps: metosin/malli:0.7.4" level="project" />
     <orderEntry type="library" name="Deps: com.cognitect/transit-clj:1.0.324" level="project" />
+    <orderEntry type="library" name="Deps: com.github.seancorfield/next.jdbc:1.2.753" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/java.jdbc:0.7.10" level="project" />
     <orderEntry type="library" name="Deps: com.mchange/mchange-commons-java:0.2.11" level="project" />
     <orderEntry type="library" name="Deps: crypto-random:1.2.1" level="project" />
@@ -98,7 +101,10 @@
     <orderEntry type="library" name="Deps: metosin/reitit-swagger-ui:0.5.15" level="project" />
     <orderEntry type="library" name="Deps: metosin/reitit:0.5.15" level="project" />
     <orderEntry type="library" name="Deps: ring/ring-servlet:1.7.1" level="project" />
+    <orderEntry type="library" name="Deps: joplin:0.3.11" level="project" />
     <orderEntry type="library" name="Deps: tech.droit/clj-diff:1.0.1" level="project" />
+    <orderEntry type="library" name="Deps: camel-snake-kebab:0.4.2" level="project" />
+    <orderEntry type="library" name="Deps: org.clojure/java.data:1.0.92" level="project" />
     <orderEntry type="library" name="Deps: org.eclipse.jetty/jetty-server:9.4.12.v20180830" level="project" />
     <orderEntry type="library" name="Deps: metosin/reitit-dev:0.5.15" level="project" />
     <orderEntry type="library" name="Deps: ring/ring-core:1.9.4" level="project" />
