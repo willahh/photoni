@@ -10,13 +10,13 @@
                            :name  "User",
                            :title "Title",
                            :email "user@email.com",
-                           :role  :role/admin,
+                           :role  "role/admin",
                            :age   24}}
            (create-user-command {:id    id
                                  :name  "User"
                                  :title "Title"
                                  :email "user@email.com"
-                                 :role  :role/admin
+                                 :role  "role/admin"
                                  :age   24})))))
 
 (deftest delete-user-by-user-id-command-test

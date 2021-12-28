@@ -8,7 +8,7 @@
                 :name  "User"
                 :title "Title"
                 :email "user@email.com"
-                :role  "role1"
+                :role  "role/admin"
                 :age   24}
         cmd (user-command/create-user-command fields)]
     (execute cmd)))

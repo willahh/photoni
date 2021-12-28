@@ -9,7 +9,7 @@
                 :name  "User"
                 :title "Title"
                 :email "user@email.com"
-                :role  "role1"
+                :role  "role/admin"
                 :age   24}
         add-user-command (user-command/create-user-command fields)
         user-created-entity (user-entity/->user fields)]
@@ -22,12 +22,12 @@
                                                                                         :name  "User",
                                                                                         :title "Title",
                                                                                         :email "user@email.com",
-                                                                                        :role  "role1",
+                                                                                        :role  "role/admin",
                                                                                         :age   24}},
                                 :entity       #:user{:id    #uuid"6550ac0a-34cf-4235-858b-32644a29ea31",
                                                      :name  "User",
                                                      :title "Title",
                                                      :email "user@email.com",
-                                                     :role  "role1",
+                                                     :role  "role/admin",
                                                      :age   24}}}
            (user-added-event add-user-command user-created-entity)))))

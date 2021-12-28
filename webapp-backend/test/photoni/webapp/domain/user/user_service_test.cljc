@@ -6,6 +6,7 @@
             [photoni.webapp.domain.user.user-command :as user-command]
             [photoni.webapp.domain.user.user-query :as user-query]))
 
+(mount.core/stop)
 (mount.core/start-with
   {#'photoni.webapp.domain.common.state/user-repository      user-repository-inmem
    #'photoni.webapp.domain.common.state/event-bus-repository event-bus-inmem-repository})

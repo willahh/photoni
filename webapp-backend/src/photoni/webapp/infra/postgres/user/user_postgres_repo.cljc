@@ -11,39 +11,38 @@
 
 (hugsql/def-db-fns "photoni/webapp/infra/postgres/user/user.sql")
 
+(def user-db->user-domain-fields
+  {:user_id :user/id
+   :name :user/name
+   :title :user/title
+   :email :user/email
+   :role :user/role
+   :age :user/age
+   :updated_by :user/updated-by
+   :updated_at :user/updated-at})
 
-(defn user-fields->user-db
-  [{:user/keys [id name title email role age] :as user-domain}]
-  {:user-id    id
-   :updated-by "user2"
-   :name       name
-   :title      title
-   :email      email
-   :role       role
-   :age        age})
+(defn user-domain-fields->user-db
+  [user-domain]
+  (merge (clojure.set/rename-keys user-domain (clojure.set/map-invert user-db->user-domain-fields))
+         {:updated_by "TODO-user-name"}))
 
 (defn user-db->user-domain
-  [{:keys [user_id name title email role age updated_by updated_at]}]
-  #:user{:id    user_id
-         :name  name
-         :title title
-         :email email
-         :role  role
-         :age   age})
+  [user-db]
+  (clojure.set/rename-keys user-db user-db->user-domain-fields))
 
 (defrecord UserPostgresRepository []
   UserRepositoryProtocol
   (get-users [user-repo]
     (map user-db->user-domain (select-users db)))
   (create-user [user-repo user-fields]
-    (let [insert-db-row (upsert-user db (user-fields->user-db user-fields))]
+    (let [insert-db-row (upsert-user db (user-domain-fields->user-db user-fields))]
       (when insert-db-row
         (user-db->user-domain insert-db-row))))
   (get-user-by-user-id [user-repo user-id]
-    (when-let [user-db (select-user-by-id db {:user-id user-id})]
+    (when-let [user-db (select-user-by-id db {:user_id user-id})]
       (user-db->user-domain user-db)))
   (delete-user-by-user-id [user-repo user-id]
-    (->boolean (delete-user-by-id db {:user-id user-id}))))
+    (->boolean (delete-user-by-id db {:user_id user-id}))))
 
 (defstate user-postgres-repository
   :start (->UserPostgresRepository))

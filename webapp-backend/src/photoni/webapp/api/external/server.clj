@@ -10,70 +10,49 @@
             [reitit.ring.middleware.exception :as exception]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.parameters :as parameters]
-    ;       [reitit.ring.middleware.dev :as dev]
-    ;       [reitit.ring.spec :as spec]
-    ;       [spec-tools.spell :as spell]
             [ring.adapter.jetty :as jetty]
             [muuntaja.core :as m]
-            [clojure.java.io :as io]
             [malli.util :as mu]
 
             [mount.core :refer [defstate]]
             [ring.middleware.reload :refer [wrap-reload]]
+            [photoni.webapp.domain.common.log :as log]
             [photoni.webapp.api.external.routes.user :as route-user]
+            [photoni.webapp.api.external.routes.group :as route-group]
             [photoni.webapp.api.api-utils :as api-utils])
   (:import [org.eclipse.jetty.server Server]))
 
-#_(comment
-  (require '[malli.core :as m])
-  (require '[malli.transform :as mt])
+(defn handler [message exception request]
+  (log/error {:service ::handler} (str exception))
+  {:status 500
+   :body {:message message
+          :data (.toString exception)
+          :uri (:uri request)}})
 
+(def exception-middleware
+  (exception/create-exception-middleware
+    (merge
+      exception/default-handlers
+      {;; ex-data with :type ::error
+       ::error                    (partial handler "error")
 
+       ;; ex-data with ::exception or ::failure
+       ::exception                (partial handler "exception")
 
+       ;; SQLException and all it's child classes
+       java.sql.SQLException      (partial handler "sql-exception")
 
+       clojure.lang.ExceptionInfo (fn [e request]
+                                    (handler "exception-info" e request))
 
+       ;; override the default handler
+       ::exception/default        (partial handler "default")
 
+       ;; print stack-traces for all exceptions
+       ::exception/wrap           (fn [handler e request]
+                                    (println "ERROR" (pr-str (:uri request)))
+                                    (handler e request))})))
 
-
-
-
-
-
-  (defn json-transformer
-    ([]
-     (json-transformer nil))
-    ([{::keys [json-vectors map-of-key-decoders] :or {map-of-key-decoders (-string-decoders)}}]
-     (transformer
-       {:name :json
-        :decoders (-> (-json-decoders)
-                      (assoc :map-of {:compile (fn [schema _]
-                                                 (or (some-> schema (m/children) (first) (m/type) map-of-key-decoders
-                                                             (m/-comp m/-keyword->string) (-transform-map-keys))
-                                                     (-transform-map-keys m/-keyword->string)))})
-                      (cond-> json-vectors (assoc :vector -sequential->vector)))
-        :encoders (-json-encoders)})))
-
-
-
-  (defn- -provider [transformer]
-    (prn "-provider" transformer)
-    (reify reitit.coercion.malli/TransformationProvider
-      (-transformer [_ {:keys [strip-extra-keys default-values]}]
-        (prn "strip-extra-keys" strip-extra-keys)
-        (prn "default-values" default-values)
-        (mt/transformer
-          (if strip-extra-keys (mt/strip-extra-keys-transformer))
-          transformer
-          (if default-values (mt/default-value-transformer))))))
-
-  (def json-transformer-provider (-provider (mt/json-transformer)))
-
-
-
-
-
-
-  )
 
 (def app
   (ring/ring-handler
@@ -83,7 +62,8 @@
                :swagger {:info {:title       "my-api"
                                 :description "with [malli](https://github.com/metosin/malli) and reitit-ring"}}
                :handler (swagger/create-swagger-handler)}}]
-       route-user/routes]
+       route-user/routes
+       route-group/routes]
 
       {;;:reitit.middleware/transform dev/print-request-diffs ;; pretty diffs
        ;;:validate spec/validate ;; enable spec validation for route data
@@ -91,13 +71,6 @@
        :exception pretty/exception
        :data      {:coercion   (reitit.coercion.malli/create
                                  {
-                                  ;:transformers     {:body     {:default reitit.coercion.malli/json-transformer-provider
-                                  ;                              ;;:formats {"application/json" reitit.coercion.malli/json-transformer-provider}
-                                  ;                              :formats {"application/json" json-transformer-provider}
-                                  ;
-                                  ;                              }
-                                  ;                   :string   {:default reitit.coercion.malli/string-transformer-provider}
-                                  ;                   :response {:default reitit.coercion.malli/default-transformer-provider}}
 
 
                                   ;; set of keys to include in error messages
@@ -119,8 +92,11 @@
                                 muuntaja/format-negotiate-middleware
                                 ;; encoding response body
                                 muuntaja/format-response-middleware
+
                                 ;; exception handling
-                                exception/exception-middleware
+                                ;; exception/exception-middleware
+                                exception-middleware
+
                                 ;; decoding request body
                                 muuntaja/format-request-middleware
                                 ;; coercing response bodys
