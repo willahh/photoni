@@ -22,36 +22,35 @@
             [photoni.webapp.api.api-utils :as api-utils])
   (:import [org.eclipse.jetty.server Server]))
 
-(defn handler [message exception request]
+(defn handler [status-code error-name handler exception request]
   (log/error {:service ::handler} (str exception))
-  {:status 500
-   :body {:message message
-          :data (.toString exception)
-          :uri (:uri request)}})
+  {:status status-code
+   :body   {:message error-name
+            :data    (.getMessage exception)
+            :uri     (:uri request)}})
 
 (def exception-middleware
   (exception/create-exception-middleware
     (merge
       exception/default-handlers
       {;; ex-data with :type ::error
-       ::error                    (partial handler "error")
+       ::error                    (partial handler 500 "error")
 
        ;; ex-data with ::exception or ::failure
-       ::exception                (partial handler "exception")
+       ::exception                (partial handler 500 "exception")
 
        ;; SQLException and all it's child classes
-       java.sql.SQLException      (partial handler "sql-exception")
+       java.sql.SQLException      (partial handler 500 "sql-exception")
 
-       clojure.lang.ExceptionInfo (fn [e request]
-                                    (handler "exception-info" e request))
+       clojure.lang.ExceptionInfo (partial handler 500 "exception-info")
+
+       IllegalArgumentException   (partial handler 500 "illegal-argument-exception")
 
        ;; override the default handler
-       ::exception/default        (partial handler "default")
+       ::exception/default        (partial handler 500 "default-exception")
 
        ;; print stack-traces for all exceptions
-       ::exception/wrap           (fn [handler e request]
-                                    (println "ERROR" (pr-str (:uri request)))
-                                    (handler e request))})))
+       ::exception/wrap           (partial handler 500 "default-exception")})))
 
 
 (def app
@@ -71,7 +70,6 @@
        :exception pretty/exception
        :data      {:coercion   (reitit.coercion.malli/create
                                  {
-
 
                                   ;; set of keys to include in error messages
                                   :error-keys       #{#_:type :coercion :in :schema :value :errors :humanized #_:transformed}

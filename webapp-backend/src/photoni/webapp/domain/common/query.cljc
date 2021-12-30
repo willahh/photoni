@@ -1,7 +1,5 @@
 (ns photoni.webapp.domain.common.query
-  (:require [photoni.webapp.domain.common.utils :refer [map->nsmap]]
-            [photoni.webapp.domain.common.validation :as validation]
-            [photoni.webapp.domain.user.user-entity]))
+  (:require [photoni.webapp.domain.common.validation :as validation]))
 
 (defn ->query
   ([query-type query-spec query-fields]

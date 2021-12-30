@@ -1,28 +1,53 @@
 (ns photoni.webapp.api.external.routes.user
   (:require [photoni.webapp.api.api-utils :as api-utils]
-            [photoni.webapp.domain.user.user-entity :as user-entity]
-            [photoni.webapp.domain.user.user-service :as user-service]
-            [photoni.webapp.domain.user.user-query :as user-query]
-            [photoni.webapp.domain.user.user-command :as user-command])
+            [photoni.webapp.domain.search.search :as search]
+            [photoni.webapp.domain.user.user :as user]
+            [photoni.webapp.domain.user.user-service :as user-service])
   (:import (java.util UUID)))
 
 (def tag-user "user")
 
+
+;; ┌───────────────────────────────────────────────────────────────────────────┐
+;; │ GET find users by                                                         │
+;; └───────────────────────────────────────────────────────────────────────────┘
+(def api-find-users-by
+  #^{:route/method :get
+     :route/path   "/api/users"}
+  {:summary     "Find users by query"
+   :description ""
+   :tags        #{tag-user}
+   ;; :parameters  {:body user/find-users-by-fields-spec} ;; TODO: Need to coerce parameters
+   :responses   {200 {:body user/find-users-by-response-spec}}
+   :handler     (fn [{:keys [body-params]}]
+                  (prn "body-params" body-params)
+                  (def body-params body-params)
+                  (def clauses (:clauses body-params))
+                  (def fields (:fields body-params))
+                  (def search-clause (search/search-clauses-json->search-clauses clauses))
+
+                  (let [fields (mapv keyword fields)
+                        search-clause (search/search-clauses-json->search-clauses clauses)
+                        results (user-service/find-users-by
+                                  (user/find-users-by-query {:fields  fields
+                                                             :clauses search-clause}))]
+                    {:status 200 :body results}))})
+
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
 ;; │ GET users                                                                 │
 ;; └───────────────────────────────────────────────────────────────────────────┘
-(def spec-users [:vector user-entity/spec-user])
-(def api-users-get-users
-  #^{:route/method :get
-     :route/path   "/api/users"}
-  {:summary     "List of users"
-   :description ""
-   :tags        #{tag-user}
-   :responses   {200 {:body spec-users}}
-   :handler     (fn [request]
-                  (let [users-entities (user-service/get-users (user-query/get-users-query))]
-                    {:status 200
-                     :body   users-entities}))})
+;(def spec-users [:vector user/spec-user])
+;(def api-users-get-users
+;  #^{:route/method :get
+;     :route/path   "/api/users"}
+;  {:summary     "List of users"
+;   :description ""
+;   :tags        #{tag-user}
+;   :responses   {200 {:body spec-users}}
+;   :handler     (fn [request]
+;                  (let [users-entities (user-service/get-users (user/get-users-query))]
+;                    {:status 200
+;                     :body   users-entities}))})
 
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
@@ -34,10 +59,10 @@
   {:summary     "Get user by id"
    :description ""
    :tags        #{tag-user}
-   :parameters  {:path [:map user-entity/spec-id]}
-   :responses   {200 {:body user-entity/spec-user}}
+   :parameters  {:path [:map user/spec-id]}
+   :responses   {200 {:body user/spec-user}}
    :handler     (fn [{{:user/keys [id]} :path-params}]
-                  (let [user-entity (user-service/get-user-by-id (user-query/get-user-by-id-query (UUID/fromString id)))]
+                  (let [user-entity (user-service/get-user-by-id (user/get-user-by-id-query (UUID/fromString id)))]
                     (if user-entity
                       {:status 200 :body user-entity}
                       {:status 404})))})
@@ -52,11 +77,11 @@
   {:summary     "Delete user by user id"
    :description ""
    :tags        #{tag-user}
-   :parameters  {:path [:map user-entity/spec-id]}
+   :parameters  {:path [:map user/spec-id]}
    ;:responses   {200 [:map {}]
    ;              404 [:map {}]}
    :handler     (fn [{{{:user/keys [id]} :path} :parameters}]
-                  (let [deleted? (user-service/delete-user (user-command/delete-user-by-user-id-command id))]
+                  (let [deleted? (user-service/delete-user (user/delete-user-by-user-id-command id))]
                     (if deleted?
                       {:status 200 :body {}}
                       {:status 404 :body {}})))})
@@ -72,23 +97,23 @@
    :description ""
    :tags        #{tag-user}
    :parameters  {:body [:map
-                        (api-utils/set-spec-field-optional user-entity/spec-id)
-                        user-entity/spec-name
-                        user-entity/spec-title
-                        user-entity/spec-email
-                        user-entity/spec-role
-                        user-entity/spec-age]}
-   :responses   {200 {:body user-entity/spec-user}}
+                        (api-utils/set-spec-field-optional user/spec-id)
+                        user/spec-name
+                        user/spec-title
+                        user/spec-email
+                        user/spec-role
+                        user/spec-age]}
+   :responses   {200 {:body user/spec-user}}
    :handler     (fn [{{{:user/keys [id role email age name title]} :body :as body} :parameters}]
                   (let [insert? (nil? id)
                         id (or id (java.util.UUID/randomUUID))
                         user-entity (user-service/create-user
-                                      (user-command/create-user-command {:id    id
-                                                                         :name  name
-                                                                         :title title
-                                                                         :email email
-                                                                         :role  role
-                                                                         :age   age}))]
+                                      (user/create-user-command {:id    id
+                                                                 :name  name
+                                                                 :title title
+                                                                 :email email
+                                                                 :role  role
+                                                                 :age   age}))]
                     {:status (if insert? 201 200)
                      :body   user-entity}))})
 

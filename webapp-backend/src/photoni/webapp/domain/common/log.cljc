@@ -8,9 +8,9 @@
 
 (defn error
   ([message]
-   (info {} message))
+   (error {} message))
   ([mdc message]
-   (println mdc message)))
+   (println (str mdc message))))
 
 (defn warn
   ([message]

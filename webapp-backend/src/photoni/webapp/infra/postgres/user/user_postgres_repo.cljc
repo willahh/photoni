@@ -5,7 +5,7 @@
             [honey.sql :as sql]
             [honey.sql.helpers :as sqlh]
             [photoni.webapp.infra.postgres.crud.crud :as crud]
-            [photoni.webapp.domain.user.user-repository-protocol :as user-repository-protocol :refer [UserRepositoryProtocol]]
+            [photoni.webapp.domain.user.user :as user :refer [UserRepositoryProtocol]]
             [photoni.webapp.infra.postgres.db-postgres :refer [db]]))
 
 (def user-db->user-domain-fields
@@ -18,43 +18,18 @@
    :puser/updated_by :user/updated-by
    :puser/updated_at :user/updated-at})
 
-(defn user-domain-fields->user-db
-  [user-domain]
-  (merge (clojure.set/rename-keys user-domain (clojure.set/map-invert user-db->user-domain-fields))
-         {:updated_by "TODO-user-name"}))
 
 (defn user-db->user-domain
   [user-db]
   (clojure.set/rename-keys user-db user-db->user-domain-fields))
 
 
-;; TODO: Renommer le get-users en find-users et l'exposer en API
-;; avec toutes les options possibles (champs, tris, clauses, limit, offset)
 (defrecord UserPostgresRepository []
   UserRepositoryProtocol
-  (find-users-by [_ {:keys [fields clauses orders limit offset]}]
-    (let [rows (->> (crud/find-by (cond-> {:table :puser}
-                                          fields (assoc :fields fields)
-                                          clauses (assoc :clauses clauses)
-                                          orders (assoc :orders orders)
-                                          limit (assoc :limit limit)
-                                          offset (assoc :offset offset))))
-          rows-count (count rows)
-          [{:keys [count]}] (->> (-> (sqlh/select [[:count :*]])
-                                     (sqlh/from :puser)
-                                     sql/format)
-                                 (jdbc/execute! db))]
-      {:total count
-       :count rows-count
-       :rows  (mapv user-db->user-domain rows)}))
+  (find-users-by [_ query-fields]
+    (crud/find-by :puser user-db->user-domain-fields query-fields))
   (get-users [user-repo]
-    (->> (crud/find-by {:table  :puser
-                        :fields [:*]
-                        ;;:orders [[:id :asc] [:title :desc]]
-                        ;;:limit 1
-                        ;;:offset 3
-                        })
-         (map user-db->user-domain)))
+    (crud/find-by :puser user-db->user-domain-fields {:fields [:*]}))
   (create-user [user-repo user-fields]
     (let [[row]
           (->> (-> (sqlh/insert-into :puser)
