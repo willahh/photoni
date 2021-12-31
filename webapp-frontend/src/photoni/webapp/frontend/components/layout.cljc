@@ -1,4 +1,4 @@
-(ns frontend.components.layout)
+(ns photoni.webapp.frontend.components.layout)
 
 (defn layout
   [component]

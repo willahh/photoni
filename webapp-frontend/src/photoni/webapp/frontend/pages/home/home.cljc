@@ -1,12 +1,12 @@
-(ns frontend.pages.home.home
+(ns photoni.webapp.frontend.pages.home.home
   (:require
-    [frontend.events :as events]
-    [frontend.utils.tailwind-styles :as styles]
     [re-frame.core :as re-frame :refer [subscribe dispatch]]
-    [frontend.components.components :as components]
-    [frontend.domain.user :as domain-user]
-    [frontend.pages.user.user-list :as page-user-list]
-    [frontend.components.layout :as layout]))
+    [photoni.webapp.frontend.events :as events]
+    [photoni.webapp.frontend.utils.tailwind-styles :as styles]
+    [photoni.webapp.frontend.components.components :as components]
+    #_[photoni.webapp.frontend.domain.user :as domain-user]
+    [photoni.webapp.frontend.pages.user.user-list :as page-user-list]
+    [photoni.webapp.frontend.components.layout :as layout]))
 
 (re-frame/reg-sub
   ::name

@@ -1,12 +1,12 @@
-(ns frontend.pages.user.user-list
+(ns photoni.webapp.frontend.pages.user.user-list
   (:require ["@headlessui/react" :refer (Transition)]
             [reagent.core :as r]
-            [frontend.db.db :as db]
-            [frontend.db.user :as db-user]
-            [frontend.components.components :as components]
-            [frontend.domain.user :as domain-user]
             [re-frame.core :as re-frame :refer [subscribe dispatch reg-event-fx reg-event-db reg-sub]]
-            [frontend.utils.tailwind-styles :as styles]))
+            [photoni.webapp.frontend.db.db :as db]
+            [photoni.webapp.frontend.db.user :as db-user]
+            [photoni.webapp.frontend.components.components :as components]
+            #_[photoni.webapp.frontend.domain.user :as domain-user]
+            [photoni.webapp.frontend.utils.tailwind-styles :as styles]))
 
 
 ;;;;;;;;;;;;;; TODO cljs interop https://stackoverflow.com/questions/58977738/javascript-to-clojurescript-interop-with-react-spring
@@ -42,7 +42,7 @@
          (components/user-list users
                                {:add-user-fn
                                 (fn []
-                                  (let [user (domain-user/generate-user-stub)]
+                                  #_(let [user (domain-user/generate-user-stub)]
                                     (dispatch [:user.event/add-user user])))
                                 :delete-user-fn
                                 (fn [user-id]

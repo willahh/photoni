@@ -1,8 +1,8 @@
-(ns frontend.reframedb.db
+(ns photoni.webapp.frontend.reframedb.db
   (:require [re-frame.core :as re-frame]
             [day8.re-frame.tracing :refer-macros [fn-traced]]
-            [frontend.db.db :as db]
-            [frontend.db.user :as db-user]))
+            [photoni.webapp.frontend.db.db :as db]
+            [photoni.webapp.frontend.db.user :as db-user]))
 
 (def default-db
   {:active-panel 1

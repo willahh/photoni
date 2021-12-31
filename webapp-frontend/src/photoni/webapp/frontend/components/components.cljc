@@ -1,5 +1,5 @@
-(ns frontend.components.components
-  (:require [frontend.utils.tailwind-styles :as styles]))
+(ns photoni.webapp.frontend.components.components
+  (:require [photoni.webapp.frontend.utils.tailwind-styles :as styles]))
 
 (defn user-list
   [users {:keys [add-user-fn delete-user-fn]}]

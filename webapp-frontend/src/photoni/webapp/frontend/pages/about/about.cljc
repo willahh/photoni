@@ -1,7 +1,7 @@
-(ns frontend.pages.about.about
+(ns photoni.webapp.frontend.pages.about.about
   (:require [re-frame.core :as re-frame]
             [re-frame.core :refer [subscribe dispatch]]
-            [frontend.events :as events]))
+            [photoni.webapp.frontend.events :as events]))
 
 (defn about-panel []
   [:div

@@ -1,13 +1,12 @@
-(ns frontend.views
+(ns photoni.webapp.frontend.views
   (:require
     [re-frame.core :as re-frame]
-    [frontend.routes :as routes]
-    [frontend.utils.tailwind-styles :as styles]
-
     [re-frame.core :refer [subscribe dispatch]]
-    [frontend.components.components :as components]
-    [frontend.pages.home.home :as page-home]
-    [frontend.pages.about.about :as page-about]))
+    [photoni.webapp.frontend.routes :as routes]
+    [photoni.webapp.frontend.utils.tailwind-styles :as styles]
+    [photoni.webapp.frontend.components.components :as components]
+    [photoni.webapp.frontend.pages.home.home :as page-home]
+    [photoni.webapp.frontend.pages.about.about :as page-about]))
 
 
 (defmethod routes/panels :home-panel []

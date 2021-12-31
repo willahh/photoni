@@ -1,4 +1,4 @@
-(ns frontend.utils.tailwind-styles)
+(ns photoni.webapp.frontend.utils.tailwind-styles)
 
 (def container :container)
 (def sr-only :sr-only)

@@ -1,10 +1,9 @@
-(ns frontend.events
+(ns photoni.webapp.frontend.events
   (:require
    [re-frame.core :as re-frame]
-   [frontend.reframedb.db :as reframe-db]
-   [frontend.db.db :as db]
    [day8.re-frame.tracing :refer-macros [fn-traced]]
-   ))
+   [photoni.webapp.frontend.reframedb.db :as reframe-db]
+   [photoni.webapp.frontend.db.db :as db]))
 
 (re-frame/reg-event-db
   ::initialize-db

@@ -1,4 +1,4 @@
-{:nrepl {:port 8777}
+{
 
  
 
@@ -26,7 +26,7 @@
    :output-dir "resources/public/js/compiled"
    :asset-path "/js/compiled"
    :modules
-   {:app {:init-fn frontend.core/init}}
+   {:app {:init-fn photoni.webapp.frontend.core/init}}
    :devtools
    {:preloads [day8.re-frame-10x.preload]}
    :dev

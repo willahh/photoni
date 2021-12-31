@@ -1,4 +1,4 @@
-(ns frontend.utils.macro)
+(ns photoni.webapp.frontend.utils.macro)
 
 (defmacro profile [k & body]
   `(let [k# ~k]

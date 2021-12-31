@@ -1,4 +1,4 @@
-(ns frontend.utils.localstorage)
+(ns photoni.webapp.frontend.utils.localstorage)
 
 (defn set-item!
   "Set `key' in browser's localStorage to `val`."

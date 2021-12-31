@@ -1,10 +1,10 @@
-(ns frontend.utils.persist-localstorage
+(ns photoni.webapp.frontend.utils.persist-localstorage-datascript
   (:require [clojure.string :as str]
             [re-frame.core :as re-frame]
             [datascript.core :as d]
-            [frontend.db.db :as db]
+            [photoni.webapp.frontend.db.db :as db]
             [datascript.transit :as dt])
-  (:require-macros [frontend.utils.macro :refer [profile]]))
+  (:require-macros [photoni.webapp.frontend.utils.macro :refer [profile]]))
 
 
 
