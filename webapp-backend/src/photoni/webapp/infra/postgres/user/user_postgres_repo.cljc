@@ -18,40 +18,16 @@
    :puser/updated_by :user/updated-by
    :puser/updated_at :user/updated-at})
 
-
-(defn user-db->user-domain
-  [user-db]
-  (clojure.set/rename-keys user-db user-db->user-domain-fields))
-
-
 (defrecord UserPostgresRepository []
   UserRepositoryProtocol
   (find-users-by [_ query-fields]
-    (crud/find-by :puser user-db->user-domain-fields query-fields))
-  (get-users [user-repo]
-    (crud/find-by :puser user-db->user-domain-fields {:fields [:*]}))
-  (create-user [user-repo user-fields]
-    (let [[row]
-          (->> (-> (sqlh/insert-into :puser)
-                   (sqlh/values [user-fields])
-                   (sqlh/upsert (-> (sqlh/on-conflict :id)
-                                    (sqlh/do-update-set :user/name
-                                                        :user/title :user/email :user/role :user/age
-                                                        :user/updated-by)))
-                   (sqlh/returning :*)
-                   sql/format)
-               (jdbc/execute! db)
-               (map user-db->user-domain))]
-      row))
-  (get-user-by-user-id [user-repo user-id]
-    (let [[user-db]
-          (->> (-> (sqlh/select :*)
-                   (sqlh/from :puser)
-                   (sqlh/where [:= :id user-id])
-                   sql/format)
-               (jdbc/execute! db)
-               (map user-db->user-domain))]
-      user-db))
+    (crud/find-many-by :puser user-db->user-domain-fields query-fields))
+  (get-users [_]
+    (crud/find-many-by :puser user-db->user-domain-fields {:fields [:*]}))
+  (create-user [_ user-fields]
+    (crud/upsert :puser user-db->user-domain-fields user-fields))
+  (get-user-by-user-id [_ user-id]
+    (crud/find-by-field-value :puser user-db->user-domain-fields :id user-id))
   (delete-user-by-user-id [user-repo user-id]
     (let [[user-db]
           (->> (-> (sqlh/delete-from :puser)

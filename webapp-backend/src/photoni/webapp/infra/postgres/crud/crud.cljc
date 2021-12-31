@@ -2,16 +2,17 @@
   (:require [next.jdbc :as jdbc]
             [honey.sql :as sql]
             [honey.sql.helpers :as sqlh]
-            [photoni.webapp.infra.postgres.db-postgres :refer [db]]))
+            [photoni.webapp.infra.postgres.db-postgres :refer [db]])
+  (:import (java.util UUID)))
 
 (defn- map-domain-fields->db-fields
   [fields-dictionary domain-fields]
   (let [domain-fields->db-fields (clojure.set/map-invert fields-dictionary)]
-    (map (fn [field]
-           (if-let [x (field domain-fields->db-fields)]
-             x
-             field))
-         domain-fields)))
+    (mapv (fn [field]
+            (if-let [x (field domain-fields->db-fields)]
+              x
+              field))
+          domain-fields)))
 
 (defn- map-db-fields->domain-fields
   [fields-dictionary db-fields]
@@ -31,13 +32,13 @@
                true sql/format)
        (jdbc/execute! db)))
 
-(defn find-by
+(defn find-many-by
   [table-name fields-dictionary {:keys [fields clauses orders limit offset] :as query-fields}]
   (let [opts (cond-> {:table  table-name
                       :fields (if (seq fields)
                                 (map-domain-fields->db-fields fields-dictionary fields)
                                 [:*])}
-                     clauses (assoc :clauses clauses)
+                     (seq clauses) (assoc :clauses clauses)
                      orders (assoc :orders orders)
                      limit (assoc :limit limit)
                      offset (assoc :offset offset))
@@ -51,24 +52,28 @@
      :count rows-count
      :rows  (map-db-fields->domain-fields fields-dictionary rows)}))
 
-
-
-
-
-
-
-
 (defn upsert
-  [table-name fields-dictionary entity-to-insert]
-  (let [[row]
-        (->> (-> (sqlh/insert-into table-name)
-                 (sqlh/values [entity-to-insert])
-                 (sqlh/upsert (-> (sqlh/on-conflict :id)
-                                  (sqlh/do-update-set :user/name
-                                                      :user/title :user/email :user/role :user/age
-                                                      :user/updated-by)))
-                 (sqlh/returning :*)
-                 sql/format)
-             (jdbc/execute! db)
-             (map-db-fields->domain-fields fields-dictionary))]
-    row))
+  ([table-name fields-dictionary entity-to-insert conflict-field]
+   (let [domain-fields->db-fields (clojure.set/map-invert fields-dictionary)
+         [row]
+         (let [update-set (apply sqlh/do-update-set domain-fields->db-fields)]
+           (->> (-> (sqlh/insert-into table-name)
+                    (sqlh/values [entity-to-insert])
+                    (sqlh/upsert (-> (sqlh/on-conflict conflict-field)
+                                     update-set))
+                    (sqlh/returning :*)
+                    sql/format)
+                (jdbc/execute! db)
+                (map-db-fields->domain-fields fields-dictionary)))]
+     row))
+  ([table-name fields-dictionary entity-to-insert]
+   (upsert table-name fields-dictionary entity-to-insert :id)))
+
+(defn find-by-field-value
+  [table-name fields-dictionary field-name field-value]
+  (->> (jdbc/execute! db (-> (sqlh/select [:*])
+                             (sqlh/from table-name)
+                             (sqlh/where [:= field-name field-value])
+                             sql/format))
+       (map-db-fields->domain-fields fields-dictionary)
+       first))

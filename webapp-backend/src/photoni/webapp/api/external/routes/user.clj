@@ -20,17 +20,21 @@
    ;; :parameters  {:body user/find-users-by-fields-spec} ;; TODO: Need to coerce parameters
    :responses   {200 {:body user/find-users-by-response-spec}}
    :handler     (fn [{:keys [body-params]}]
-                  (prn "body-params" body-params)
-                  (def body-params body-params)
-                  (def clauses (:clauses body-params))
-                  (def fields (:fields body-params))
-                  (def search-clause (search/search-clauses-json->search-clauses clauses))
+                  (prn "body-params2" body-params)
 
-                  (let [fields (mapv keyword fields)
+                  (do "TODO TEMP DEBUG"
+                      (def body-params body-params)
+                      (def clauses (:clauses body-params))
+                      (def fields (:fields body-params))
+                      (def search-clause (search/search-clauses-json->search-clauses clauses)))
+
+                  (let [fields (:fields body-params)
+                        clauses (:clauses body-params)
+                        fields (mapv keyword fields)
                         search-clause (search/search-clauses-json->search-clauses clauses)
                         results (user-service/find-users-by
-                                  (user/find-users-by-query {:fields  fields
-                                                             :clauses search-clause}))]
+                                  (user/find-users-by-query (cond-> {:fields fields}
+                                                                    search-clause (assoc :clauses search-clause))))]
                     {:status 200 :body results}))})
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
