@@ -31,6 +31,7 @@
     <orderEntry type="library" name="Deps: org.eclipse.jetty/jetty-http:9.4.12.v20180830" level="project" />
     <orderEntry type="library" name="Deps: org.eclipse.jetty/jetty-util:9.4.12.v20180830" level="project" />
     <orderEntry type="library" name="Deps: metosin/spec-tools:0.10.5" level="project" />
+    <orderEntry type="library" name="Deps: Local webapp-domain" level="project" />
     <orderEntry type="library" name="Deps: com.layerware/hugsql-adapter:0.5.1" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/tools.macro:0.1.5" level="project" />
     <orderEntry type="library" name="Deps: lambdaisland/deep-diff:0.0-47" level="project" />

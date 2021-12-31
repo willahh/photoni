@@ -1,9 +1,9 @@
 (ns photoni.webapp.domain.user.user
   (:require [malli.core :as m]
+            [malli.generator :as mg]
             [photoni.webapp.domain.common.command :as command]
             [photoni.webapp.domain.common.event :as event]
-            [photoni.webapp.domain.common.query :as query]
-            [malli.generator :as mg]))
+            [photoni.webapp.domain.common.query :as query]))
 
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
