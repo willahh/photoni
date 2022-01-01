@@ -1,8 +1,8 @@
 (ns user
   (:require [mount.core]
-            [photoni.webapp.domain.common.state-WIP-TODO]
+            [photoni.webapp.domain.common.state]
             [photoni.webapp.domain.user.user-service]
-            [photoni.webapp.api.external.server]))
+            [photoni.webapp.backend.api.external.server]))
 
 (defn go []
   (mount.core/start))

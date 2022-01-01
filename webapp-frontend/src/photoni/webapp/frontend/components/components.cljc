@@ -1,49 +1,33 @@
 (ns photoni.webapp.frontend.components.components
   (:require [photoni.webapp.frontend.utils.tailwind-styles :as styles]))
 
-(defn user-list
-  [users {:keys [add-user-fn delete-user-fn]}]
-  [:div
-   [:div {:class [styles/md:flex styles/md:items-center styles/md:justify-between]}
-    [:div {:class [styles/flex-1 styles/min-w-0]}
-     [:h2 {:class [styles/text-2xl styles/font-bold styles/leading-7 styles/text-gray-900
-                   styles/sm:text-3xl styles/sm:truncate]} "Back End Developer"]]
+(defn load-spinner
+  []
+  [:div.flex.items-center.justify-center.space-x-2
+   {:class [styles/md:absolute styles/md:w-full]}
+   [:div.spinner-border.animate-spin.inline-block.w-12.h-12.border-4.rounded-full {:role "status"}
+    [:span.visually-hidden "Loading..."]]])
 
-    [:div.mt-4.flex.md:mt-0.md:ml-4
-     [:button.inline-flex.items-center.px-4.py-2.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.bg-white.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500 {:type "button"} "Edit"]
-     [:button.ml-3.inline-flex.items-center.px-4.py-2.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-      {:type "button" :on-click add-user-fn} "Add user"]]]
+(defn pagination
+  []
+  [:nav.border-t.border-gray-200.px-4.flex.items-center.justify-between.sm:px-0
+   [:div.-mt-px.w-0.flex-1.flex
+    [:a.border-t-2.border-transparent.pt-4.pr-1.inline-flex.items-center.text-sm.font-medium.text-gray-500.hover:text-gray-700.hover:border-gray-300 {:href "#"}
+     [:svg.mr-3.h-5.w-5.text-gray-400 {:xmlns "http://www.w3.org/2000/svg" :viewBox "0 0 20 20" :fill "currentColor" :aria-hidden "true"}
+      [:path {:fill-rule "evenodd" :d "M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" :clip-rule "evenodd"}]] "Previous"]]
+   [:div {:class [styles/mt-px styles/flex]}
+    [:a.border-transparent.text-gray-500.hover:text-gray-700.hover:border-gray-300.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium {:href "#"} "1"]
+    [:a.border-indigo-500.text-indigo-600.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium {:href "#" :aria-current "page"} "2"]
+    [:a.border-transparent.text-gray-500.hover:text-gray-700.hover:border-gray-300.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium {:href "#"} "3"]
+    [:span.border-transparent.text-gray-500.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium "..."]
+    [:a.border-transparent.text-gray-500.hover:text-gray-700.hover:border-gray-300.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium {:href "#"} "8"]
+    [:a.border-transparent.text-gray-500.hover:text-gray-700.hover:border-gray-300.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium {:href "#"} "9"]
+    [:a.border-transparent.text-gray-500.hover:text-gray-700.hover:border-gray-300.border-t-2.pt-4.px-4.inline-flex.items-center.text-sm.font-medium {:href "#"} "10"]]
+   [:div.-mt-px.w-0.flex-1.flex.justify-end
+    [:a.border-t-2.border-transparent.pt-4.pl-1.inline-flex.items-center.text-sm.font-medium.text-gray-500.hover:text-gray-700.hover:border-gray-300 {:href "#"} "Next"
+     [:svg.ml-3.h-5.w-5.text-gray-400 {:xmlns "http://www.w3.org/2000/svg" :viewBox "0 0 20 20" :fill "currentColor" :aria-hidden "true"}
+      [:path {:fill-rule "evenodd" :d "M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" :clip-rule "evenodd"}]]]]])
 
-
-
-
-   [:div.flex.flex-col
-   [:div.-my-2.overflow-x-auto.sm:-mx-6.lg:-mx-8
-    [:div.py-2.align-middle.inline-block.min-w-full.sm:px-6.lg:px-8
-     [:div.shadow.overflow-hidden.border-b.border-gray-200.sm:rounded-lg
-      [:table.min-w-full.divide-y.divide-gray-200
-       [:thead.bg-gray-50
-        [:tr
-         [:th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider {:scope "col"} "Name"]
-         [:th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider {:scope "col"} "Title"]
-         [:th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider {:scope "col"} "Email"]
-         [:th.px-6.py-3.text-left.text-xs.font-medium.text-gray-500.uppercase.tracking-wider {:scope "col"} "Role"]
-         [:th.relative.px-6.py-3 {:scope "col"}
-          [:span.sr-only "Edit"]]]]
-       [:tbody
-        (map (fn [^frontend.domain.user {:user/keys [id name title email age role]}]
-               ^{:key id}[:tr.bg-white
-                [:td.px-6.py-4.whitespace-nowrap.text-sm.font-medium.text-gray-900 name]
-                [:td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 title]
-                [:td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 email]
-                [:td.px-6.py-4.whitespace-nowrap.text-sm.text-gray-500 role]
-                [:td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
-                 [:a.text-indigo-600.hover:text-indigo-900 {:href "#"} "Edit"]
-                 [:a.text-indigo-600.hover:text-indigo-900 {:href "#"
-                                                            :on-click (fn [] (delete-user-fn id))} "Delete"]]])
-             users)
-        ]]]]]]]
-  )
 
 
 (defn user-edit

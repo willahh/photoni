@@ -1,7 +1,7 @@
 (ns photoni.webapp.domain.common.command-executor
   (:require [photoni.webapp.domain.common.log :as log]
             [mount.core :refer [defstate]]
-            [photoni.webapp.domain.common.state-WIP-TODO :as state]))
+            [photoni.webapp.domain.common.state :as state]))
 
 (defn register-command-handler
   [command-type command-handler]

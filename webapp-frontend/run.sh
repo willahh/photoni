@@ -1,2 +1,2 @@
-yarn install
-npx shadow-cljs watch app
+yarn install \
+&& clojure -M:dev:run

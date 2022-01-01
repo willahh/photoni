@@ -1,8 +1,14 @@
 (ns photoni.webapp.frontend.components.layout)
 
 (defn layout
-  [component]
+  [{:view.layout/keys [go-to-home-fn
+                       go-to-about-fn
+                       go-to-user-fn]} component]
   [:div.min-h-screen.bg-white
+   [:div
+    [:div [:a {:on-click go-to-home-fn} "Home"]]
+    [:div [:a {:on-click go-to-about-fn} "About"]]
+    [:div [:a {:on-click go-to-user-fn} "Users"]]]
    [:nav.bg-white.border-b.border-gray-200
     [:div.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8
      [:div.flex.justify-between.h-16
@@ -65,4 +71,10 @@
      [:div.max-w-7xl.mx-auto.sm:px-6.lg:px-8
       [:div.px-4.py-8.sm:px-0
        [:div.border-4.border-dashed.border-gray-200.rounded-lg.h-96
-        component]]]]]])
+        component
+        #_(for [component components]
+            [component])
+        ]
+       #_(vec (concat
+                [:div.border-4.border-dashed.border-gray-200.rounded-lg.h-96]
+                component))]]]]])

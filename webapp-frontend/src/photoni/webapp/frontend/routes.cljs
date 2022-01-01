@@ -1,17 +1,18 @@
 (ns photoni.webapp.frontend.routes
   (:require
-   [bidi.bidi :as bidi]
-   [pushy.core :as pushy]
-   [re-frame.core :as re-frame]
-   [photoni.webapp.frontend.events :as events]))
+    [bidi.bidi :as bidi]
+    [pushy.core :as pushy]
+    [re-frame.core :as re-frame]
+    [photoni.webapp.frontend.events :as events]))
 
 (defmulti panels identity)
 (defmethod panels :default [] [:div "No panel found for this route."])
 
 (def routes
   (atom
-    ["/" {""      :home
-          "about" :about}]))
+    ["/" {""      :view/home
+          "about" :view/about
+          "user"  :view/user}]))
 
 (defn parse
   [url]
@@ -23,11 +24,11 @@
 
 (defn dispatch
   [route]
-  (let [panel (keyword (str (name (:handler route)) "-panel"))]
-    (re-frame/dispatch [::events/set-active-panel panel])))
+  (let [view-name (:handler route)]
+    (re-frame/dispatch [::events/set-active-panel view-name])))
 
 (defonce history
-  (pushy/pushy dispatch parse))
+         (pushy/pushy dispatch parse))
 
 (defn navigate!
   [handler]

@@ -6,3 +6,4 @@
      (let [res# (do ~@body)]
        (.timeEnd js/console k#)
        res#)))
+

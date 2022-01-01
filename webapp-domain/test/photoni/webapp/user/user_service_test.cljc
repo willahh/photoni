@@ -1,6 +1,6 @@
 (ns photoni.webapp.domain.user.user-service-test
   (:require [clojure.test :refer [deftest is testing]]
-            [photoni.webapp.infra.inmem.eventbus-inmem-repo :refer [event-bus-inmem-repository]]
+            [photoni.webapp.domain.common.event-bus-repo-inmem :refer [event-bus-repository-inmem]]
             [photoni.webapp.infra.inmem.user-inmem-repo :refer [user-repository-inmem]]
             [photoni.webapp.domain.user.user-service :as user-service]
             [photoni.webapp.domain.user.user-command :as user-command]
@@ -8,8 +8,8 @@
 
 (mount.core/stop)
 (mount.core/start-with
-  {#'photoni.webapp.domain.common.state-WIP-TODO/user-repository      user-repository-inmem
-   #'photoni.webapp.domain.common.state-WIP-TODO/event-bus-repository event-bus-inmem-repository})
+  {#'photoni.webapp.domain.common.state/user-repository      user-repository-inmem
+   #'photoni.webapp.domain.common.state/event-bus-repository event-bus-repository-inmem})
 
 (deftest scenario-add-retrieve-and-delete-user-test
   (let [user-id (java.util.UUID/randomUUID)

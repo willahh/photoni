@@ -1,43 +1,52 @@
 (ns photoni.webapp.domain.user.user-service
-  (:require [photoni.webapp.domain.common.state :as state]
-            [photoni.webapp.domain.common.event-bus :as event-bus]
+  (:require [photoni.webapp.domain.common.event-bus :as event-bus]
+            [photoni.webapp.domain.user.user-repository :as user-repository]
             [photoni.webapp.domain.user.user :as user]))
 
-(defn find-users-by
-  [find-users-by-query]
-  (let [query-fields (get-in find-users-by-query [:fields])
-        result (user/find-users-by state/user-repository query-fields)
-        event (user/find-users-by-event find-users-by-query result)]
-    (event-bus/publish! state/event-bus-repository event)
-    result))
+(defprotocol UserServiceProtocol
+  (find-users-by [_ find-users-by-query])
+  (get-users [_ get-users-query])
+  (create-user [_ create-user-command])
+  (get-user-by-user-id [_ get-user-query])
+  (delete-user-by-user-id [_ delete-user-by-user-id-command]))
 
-(defn get-users
-  [get-users-query]
-  (let [users-entities (user/get-users state/user-repository)
-        event (user/users-retrieved-event get-users-query users-entities)]
-    (event-bus/publish! state/event-bus-repository event)
-    users-entities))
+(defrecord UserService [user-repo event-bus-repo]
+  UserServiceProtocol
+  (get-users
+    [_ get-users-query]
+    (prn "get-users (domain)" get-users-query)
+    (prn "user-repo" user-repo)
 
-(defn get-user-by-id
-  [get-user-query]
-  (let [user-id (get-in get-user-query [:fields :user/id])
-        user-entity (user/get-user-by-user-id state/user-repository user-id)
-        event (user/user-retrieved-event get-user-query user-entity)]
-    (event-bus/publish! state/event-bus-repository event)
-    user-entity))
+    (let [users-entities (user-repository/get-users user-repo)
+          event (user/users-retrieved-event get-users-query users-entities)]
+      (event-bus/publish! event-bus-repo event)
+      users-entities))
+  (find-users-by
+    [_ find-users-by-query]
+    (let [query-fields (get-in find-users-by-query [:fields])
+          result (user-repository/find-users-by user-repo query-fields)
+          event (user/find-users-by-event find-users-by-query result)]
+      (event-bus/publish! event-bus-repo event)
+      result))
+  (get-user-by-user-id
+    [_ get-user-query]
+    (let [user-id (get-in get-user-query [:fields :user/id])
+          user-entity (user-repository/get-user-by-user-id user-repo user-id)
+          event (user/user-retrieved-event get-user-query user-entity)]
+      (event-bus/publish! event-bus-repo event)
+      user-entity))
+  (create-user
+    [_ create-user-command]
+    (let [user-fields (get-in create-user-command [:fields])
+          user-entity (user-repository/create-user user-repo user-fields)
+          event (user/user-added-event create-user-command user-entity)]
+      (event-bus/publish! event-bus-repo event)
+      user-entity))
+  (delete-user-by-user-id
+    [_ delete-user-by-user-id-command]
+    (let [user-id (get-in delete-user-by-user-id-command [:fields :user/id])
+          deleted? (user-repository/delete-user-by-user-id user-repo user-id)
+          event (user/user-deleted-event delete-user-by-user-id-command)]
+      (event-bus/publish! event-bus-repo event)
+      deleted?)))
 
-(defn create-user
-  [create-user-command]
-  (let [user-fields (get-in create-user-command [:fields])
-        user-entity (user/create-user state/user-repository user-fields)
-        event (user/user-added-event create-user-command user-entity)]
-    (event-bus/publish! state/event-bus-repository event)
-    user-entity))
-
-(defn delete-user
-  [delete-user-by-user-id-command]
-  (let [user-id (get-in delete-user-by-user-id-command [:fields :user/id])
-        deleted? (user/delete-user-by-user-id state/user-repository user-id)
-        event (user/user-deleted-event delete-user-by-user-id-command)]
-    (event-bus/publish! state/event-bus-repository event)
-    deleted?))
