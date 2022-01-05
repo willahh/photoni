@@ -10,9 +10,10 @@
 
 (def routes
   (atom
-    ["/" {""      :view/home
-          "about" :view/about
-          "user"  :view/user}]))
+    ["/" {""            :view/home
+          "about"       :view/about
+          "user"        :view/user
+          "user/upsert" :view/user-upsert}]))
 
 (defn parse
   [url]
@@ -24,6 +25,7 @@
 
 (defn dispatch
   [route]
+  (prn "dispatch route:" route)
   (let [view-name (:handler route)]
     (re-frame/dispatch [::events/set-active-panel view-name])))
 
@@ -32,6 +34,7 @@
 
 (defn navigate!
   [handler]
+  (prn "navigate! handler:" handler)
   (pushy/set-token! history (url-for handler)))
 
 (defn start!

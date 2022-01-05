@@ -17,6 +17,8 @@
            datascript/datascript       {:mvn/version "1.2.8"}
            bidi/bidi                   {:mvn/version "2.1.6"}
            clj-commons/pushy           {:mvn/version "0.3.10"}
+           cljs-http/cljs-http         {:mvn/version "0.1.46"} ;; todo: remove this
+           cljs-ajax/cljs-ajax         {:mvn/version "0.8.4"}
 
            ; clj and cljs
            org.clojure/clojurescript   {:mvn/version "1.10.879"}

@@ -29,6 +29,7 @@
                       (def fields (:fields body-params))
                       (def search-clause (search/search-clauses-json->search-clauses clauses)))
 
+                  (Thread/sleep 2000)
                   (let [fields (:fields body-params)
                         clauses (:clauses body-params)
                         fields (mapv keyword fields)
@@ -114,16 +115,27 @@
                         user/spec-age]}
    :responses   {200 {:body user/spec-user}}
    :handler     (fn [{{{:user/keys [id role email age name title]} :body :as body} :parameters}]
+                  (prn "CREATE USER x :" id role email age)
+
+                  (do
+                    (def id id)
+                    (def role role)
+                    (def email email)
+                    (def age age)
+                    (def name name)
+                    (def title title)
+                    )
                   (let [insert? (nil? id)
                         id (or id (java.util.UUID/randomUUID))
                         user-entity (user-service/create-user
                                       user-service-repo
-                                      (user/create-user-command {:id    id
-                                                                 :name  name
-                                                                 :title title
-                                                                 :email email
-                                                                 :role  role
-                                                                 :age   age}))]
+                                      (user/create-user-command #:user{:id    id
+                                                                       :name  name
+                                                                       :title title
+                                                                       :email email
+                                                                       :role  role
+                                                                       :age   age}))]
+                    (Thread/sleep 2000)
                     {:status (if insert? 201 200)
                      :body   user-entity}))})
 

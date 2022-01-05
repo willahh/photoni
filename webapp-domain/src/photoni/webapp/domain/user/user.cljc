@@ -181,7 +181,7 @@
     spec-user]])
 
 (defn create-user-command
-  [{:keys [id name title email role age] :as fields}]
+  [{:user/keys [id name title email role age] :as fields}]
   (command/->command ::create-user-command
                      create-user-command-spec
                      #:user{:id    id

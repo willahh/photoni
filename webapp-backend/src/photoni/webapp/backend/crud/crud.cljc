@@ -54,17 +54,15 @@
 
 (defn upsert
   ([table-name fields-dictionary entity-to-insert conflict-field]
-   (let [domain-fields->db-fields (clojure.set/map-invert fields-dictionary)
-         [row]
-         (let [update-set (apply sqlh/do-update-set domain-fields->db-fields)]
-           (->> (-> (sqlh/insert-into table-name)
-                    (sqlh/values [entity-to-insert])
-                    (sqlh/upsert (-> (sqlh/on-conflict conflict-field)
-                                     update-set))
-                    (sqlh/returning :*)
-                    sql/format)
-                (jdbc/execute! db)
-                (map-db-fields->domain-fields fields-dictionary)))]
+   (let [[row]
+         (->> (-> (sqlh/insert-into table-name)
+                  (sqlh/values [entity-to-insert])
+                  (sqlh/upsert {:on-conflict   [conflict-field],
+                                :do-update-set (filter #(not= % :puser/id) (keys fields-dictionary))})
+                  (sqlh/returning :*)
+                  sql/format)
+              (jdbc/execute! db)
+              (map-db-fields->domain-fields fields-dictionary))]
      row))
   ([table-name fields-dictionary entity-to-insert]
    (upsert table-name fields-dictionary entity-to-insert :id)))

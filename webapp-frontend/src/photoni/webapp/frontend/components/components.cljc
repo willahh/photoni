@@ -1,5 +1,6 @@
 (ns photoni.webapp.frontend.components.components
-  (:require [photoni.webapp.frontend.utils.tailwind-styles :as styles]))
+  (:require [reagent.core :as r]
+            [photoni.webapp.frontend.utils.tailwind-styles :as styles]))
 
 (defn load-spinner
   []
@@ -7,6 +8,55 @@
    {:class [styles/md:absolute styles/md:w-full]}
    [:div.spinner-border.animate-spin.inline-block.w-12.h-12.border-4.rounded-full {:role "status"}
     [:span.visually-hidden "Loading..."]]])
+
+(defn button
+  []
+  [:button.inline-flex.items-center.p-1.border.border-transparent.rounded-full.shadow-sm.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+   {:class [styles/bg-indigo-600] :type "button"}
+   [:svg.h-5.w-5 {:xmlns "http://www.w3.org/2000/svg" :viewBox "0 0 20 20" :fill "currentColor" :aria-hidden "true"}
+    [:path {:fill-rule "evenodd" :d "M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" :clip-rule "evenodd"}]]])
+
+(defn button-w-icon
+  [{:keys [href] :as opts} icon]
+  [(if href :a :button)
+   (merge {:class "inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-black hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"}
+          opts)
+   icon])
+
+(defn modal-confirm-delete
+  [title description delete-fn visible?]
+  (fn []
+    (when @visible?
+      [:div
+       [:div.flex.flex-col.space-y-4.min-w-screen.h-screen.animated.fadeIn.faster.fixed.left-0.top-0.flex.justify-center.items-center.inset-0.outline-none.focus:outline-none.opacity-50.bg-gray-900
+        {:class     [styles/fixed styles/z-40]
+         :tab-index 0
+         :on-click  (fn [] (reset! visible? false))
+         :on-key-up (fn [e]
+                      (when (= "Escape" (.-key e))
+                        (reset! visible? false)))}]
+       #_[:div.flex.flex-col.p-8.bg-white.shadow-md.hover:shodow-lg.rounded-2xl
+          [:div.flex.items-center.justify-between
+           [:div.flex.items-center
+            [:svg.w-16.h-16.rounded-2xl.p-3.border.border-blue-100.text-blue-400.bg-blue-50 {:xmlns "http://www.w3.org/2000/svg" :fill "none" :viewBox "0 0 24 24" :stroke "currentColor"}
+             [:path {:stroke-linecap "round" :stroke-linejoin "round" :stroke-width "2" :d "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"}]]
+            [:div.flex.flex-col.ml-3
+             [:div.font-medium.leading-none title]
+             [:p.text-sm.text-gray-600.leading-none.mt-1 description]]]
+           [:button.flex-no-shrink.bg-red-500.px-5.ml-4.py-2.text-sm.shadow-sm.hover:shadow-lg.font-medium.tracking-wider.border-2.border-red-500.text-white.rounded-full "Delete"]]]
+       [:div.flex.flex-col.p-8.bg-gray-800.shadow-md.hover:shodow-lg.rounded-2xl
+        {:class [styles/fixed styles/z-50]}
+        [:div.flex.items-center.justify-between
+         [:div.flex.items-center
+          [:svg.w-16.h-16.rounded-2xl.p-3.border.border-gray-800.text-blue-400.bg-gray-900 {:xmlns "http://www.w3.org/2000/svg" :fill "none" :viewBox "0 0 24 24" :stroke "currentColor"}
+           [:path {:stroke-linecap "round" :stroke-linejoin "round" :stroke-width "2" :d "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"}]]
+          [:div.flex.flex-col.ml-3
+           [:div.font-medium.leading-none.text-gray-100 title]
+           [:p.text-sm.text-gray-500.leading-none.mt-1 description]]]
+         [:button.flex-no-shrink.bg-red-500.px-5.ml-4.py-2.text-sm.shadow-sm.hover:shadow-lg.font-medium.tracking-wider.border-2.border-red-500.text-white.rounded-full
+          {:on-click (fn [] (delete-fn))}
+          "Delete"]]]])))
+
 
 (defn pagination
   []

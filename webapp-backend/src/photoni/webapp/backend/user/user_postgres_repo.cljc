@@ -25,7 +25,7 @@
   (get-users [_]
     (crud/find-many-by :puser user-db->user-domain-fields {:fields [:*]}))
   (create-user [_ user-fields]
-    (crud/upsert :puser user-db->user-domain-fields user-fields))
+    (crud/upsert :puser user-db->user-domain-fields user-fields :id))
   (get-user-by-user-id [_ user-id]
     (crud/find-by-field-value :puser user-db->user-domain-fields :id user-id))
   (delete-user-by-user-id [user-repo user-id]

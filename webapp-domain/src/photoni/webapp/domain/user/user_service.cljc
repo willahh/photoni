@@ -37,6 +37,7 @@
       user-entity))
   (create-user
     [_ create-user-command]
+    (prn "create-user (domain)")
     (let [user-fields (get-in create-user-command [:fields])
           user-entity (user-repository/create-user user-repo user-fields)
           event (user/user-added-event create-user-command user-entity)]
