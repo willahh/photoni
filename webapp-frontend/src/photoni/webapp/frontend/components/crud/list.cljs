@@ -10,6 +10,7 @@
            columns
            add-user-fn
            delete-user-fn
+           edit-user-fn
            go-to-home-fn
            go-to-about-fn
            go-to-user-fn
@@ -22,6 +23,7 @@
                  columns
                  add-user-fn
                  delete-user-fn
+                 edit-user-fn
                  go-to-home-fn
                  go-to-about-fn
                  go-to-user-fn
@@ -38,7 +40,6 @@
          [:button.inline-flex.items-center.px-4.py-2.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.bg-white.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500 {:type "button"} "Edit"]
          [:button.ml-3.inline-flex.items-center.px-4.py-2.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
           {:type "button" :on-click (fn []
-                                      (prn "click button add user")
                                       (add-user-fn))} "Add user"]]]
 
        [:div.flex.flex-col
@@ -87,7 +88,10 @@
                                  {:class [styles/border-b styles/border-gray-200]}
 
                                  [components/button-w-icon {:href  "#"
-                                                            :title "Edit"} icons/icon-edit]
+                                                            :title "Edit"
+                                                            :on-click (fn []
+                                                                        (prn "onclick id:" id)
+                                                                        (edit-user-fn id))} icons/icon-edit]
                                  [components/button-w-icon {:type     "button"
                                                             :title    "Delete"
                                                             :on-click (fn []

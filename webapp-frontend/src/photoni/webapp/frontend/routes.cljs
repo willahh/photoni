@@ -13,7 +13,8 @@
     ["/" {""            :view/home
           "about"       :view/about
           "user"        :view/user
-          "user/upsert" :view/user-upsert}]))
+          "user/"       {[:user-id "/edit"] :view/user-edit}
+          "user/insert" :view/user-insert}]))
 
 (defn parse
   [url]
@@ -25,17 +26,17 @@
 
 (defn dispatch
   [route]
-  (prn "dispatch route:" route)
-  (let [view-name (:handler route)]
-    (re-frame/dispatch [::events/set-active-panel view-name])))
+  (let [view-name (:handler route)
+        params (:route-params route)]
+    (re-frame/dispatch [::events/set-active-panel view-name params])))
 
 (defonce history
          (pushy/pushy dispatch parse))
 
 (defn navigate!
-  [handler]
-  (prn "navigate! handler:" handler)
-  (pushy/set-token! history (url-for handler)))
+  [handler route-params]
+  (let [route-url (apply url-for handler (apply concat route-params))]
+    (pushy/set-token! history route-url)))
 
 (defn start!
   []
@@ -43,5 +44,5 @@
 
 (re-frame/reg-fx
   :navigate
-  (fn [handler]
-    (navigate! handler)))
+  (fn [[handler route-params]]
+    (navigate! handler route-params)))

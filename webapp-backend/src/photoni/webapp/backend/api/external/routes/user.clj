@@ -29,7 +29,6 @@
                       (def fields (:fields body-params))
                       (def search-clause (search/search-clauses-json->search-clauses clauses)))
 
-                  (Thread/sleep 2000)
                   (let [fields (:fields body-params)
                         clauses (:clauses body-params)
                         fields (mapv keyword fields)
@@ -135,7 +134,6 @@
                                                                        :email email
                                                                        :role  role
                                                                        :age   age}))]
-                    (Thread/sleep 2000)
                     {:status (if insert? 201 200)
                      :body   user-entity}))})
 

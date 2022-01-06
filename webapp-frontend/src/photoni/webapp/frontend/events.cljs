@@ -11,11 +11,13 @@
              reframe-db/default-db))
 
 (re-frame/reg-event-fx
-    ::navigate
-    (fn-traced [_ [_ handler]]
-               {:navigate handler}))
+  ::navigate
+  (fn-traced [_ [_ handler route-params]]
+             {:navigate [handler route-params]}))
 
 (re-frame/reg-event-fx
   ::set-active-panel
-  (fn-traced [{:keys [db]} [_ active-panel]]
-             {:db (assoc db :active-panel active-panel)}))
+  (fn-traced [{:keys [db]} [_ active-panel params]]
+             {:db (-> db
+                      (assoc :active-panel active-panel)
+                      (assoc :route-params params))}))

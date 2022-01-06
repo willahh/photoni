@@ -5,9 +5,10 @@
             [reagent.core :as r]))
 
 (defn upsert-view
-  [{:keys [mode
+  [{:keys [update?
            title
            subtitle
+           loading?
            columns
            row
            submit-fn
@@ -16,42 +17,37 @@
            delete-user-fn
            go-to-home-fn
            go-to-about-fn
-           go-to-user-fn
-           loading?]}]
-  (let [form-state (atom {:user/id   "1"
-                          :user/name "name"})
-        row (r/atom row)]
-    (fn [{:keys [mode
-                 title
-                 subtitle
-                 columns
-                 submit-fn
-
-                 add-user-fn
-                 delete-user-fn
-                 go-to-home-fn
-                 go-to-about-fn
-                 go-to-user-fn
-                 loading?]}]
-
-      (do "TODO DEBUG"
-          (def columns columns)
-          (def row row))
-
+           go-to-user-fn]}]
+  (fn [{:keys [update?
+               title
+               subtitle
+               loading?
+               columns
+               submit-fn
+               row
+               add-user-fn
+               delete-user-fn
+               go-to-home-fn
+               go-to-about-fn
+               go-to-user-fn]}]
+    (prn ">> row:" row)
+    (prn ">>>>>>>>>> loading?:" loading?)
+    (let [row (r/atom row)]
       [:form.space-y-8.divide-y.divide-gray-200
        {:on-submit (fn [e]
                      (prn "on submit")
-                     (reduce (fn [acc [key {:keys [label pkey coercion] :as column-conf}]]
-
-                               (let [value (get @row key)]
-                                 (assoc acc key (if (fn? coercion)
-                                                  (coercion value)
-                                                  value))
-                                 ))
-                             {}
-                             columns)
                      (.preventDefault e)
-                     (submit-fn @row))}
+                     (let [row (reduce (fn [acc [key {:keys [label pkey coercion] :as column-conf}]]
+                                         (let [value (get @row key)]
+                                           (assoc acc key (if (fn? coercion)
+                                                            (coercion value)
+                                                            value))
+                                           ))
+                                       {}
+                                       columns)]
+                       (submit-fn row)))}
+
+
        [:div.space-y-8.divide-y.divide-gray-200
         [:div.pt-8
          [:div
@@ -74,18 +70,23 @@
                         ;; :auto-complete "given-name"
                         :value     row-value
                         :on-change (fn [e]
-                                     (prn "onchange (fn? coercion):" (fn? coercion))
-                                     (let [value (-> e .-target .-value)
-                                           value (if (fn? coercion)
-                                                   (coercion value)
-                                                   value)]
+                                     (prn "onchange :")
+                                     (let [value (-> e .-target .-value)]
+                                       (prn "key" key)
+                                       (prn "value" value)
                                        (swap! row assoc key value)))}]]])))
               columns))
 
 
+
           [:div
-           [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-            {:type "submit"} "Create"]
+           (if update?
+             [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+              {:type "submit"} (str "Update"
+                                    (when loading? " loading!"))]
+             [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+              {:type "submit"} (str "Create"
+                                    (when loading? " loading!"))])
            [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
             {:type "submit"} "Cancel"]]
 

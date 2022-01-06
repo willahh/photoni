@@ -19,11 +19,11 @@
     (http/post "http://localhost:3000/api/users"
                {:transit-params user-fields}))
   (get-user-by-user-id [_ user-id]
-    )
+    (http/get (str "http://localhost:3000/api/users/" user-id)
+              {:with-credentials? false}))
   (delete-user-by-user-id [user-repo user-id]
-    (go (let [response (<! (http/delete (str "http://localhost:3000/api/users/" user-id)
-                                        {:with-credentials? false}))]
-          (:body response)))))
+    (http/delete (str "http://localhost:3000/api/users/" user-id)
+                 {:with-credentials? false})))
 
 (defstate user-repository-js
   :start (->UserRepositoryFrontend))
