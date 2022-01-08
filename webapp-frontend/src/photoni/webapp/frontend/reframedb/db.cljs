@@ -1,15 +1,6 @@
 (ns photoni.webapp.frontend.reframedb.db
-  (:require [re-frame.core :as re-frame]
-            [day8.re-frame.tracing :refer-macros [fn-traced]]
-
-            ))
+  (:require [photoni.webapp.frontend.pages.user.user-db :refer [user-db]]))
 
 (def default-db
-  {:active-panel 1})
-
-
-
-;(re-frame/reg-event-db
-;  :initialise-db-with-dt
-;  (fn [db [_ stored-db]]
-;    (assoc db :users (db-user/find-all-users))))
+  (merge {:active-panel 1}
+         user-db))

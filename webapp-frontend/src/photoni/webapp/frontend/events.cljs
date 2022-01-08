@@ -2,13 +2,13 @@
   (:require
     [re-frame.core :as re-frame]
     [day8.re-frame.tracing :refer-macros [fn-traced]]
-    [photoni.webapp.frontend.reframedb.db :as reframe-db]
+    [photoni.webapp.frontend.reframedb.db :refer [default-db]]
     ))
 
 (re-frame/reg-event-db
   ::initialize-db
   (fn-traced [_ _]
-             reframe-db/default-db))
+            default-db))
 
 (re-frame/reg-event-fx
   ::navigate

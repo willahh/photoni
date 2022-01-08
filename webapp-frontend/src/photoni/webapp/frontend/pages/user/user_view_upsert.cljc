@@ -7,7 +7,7 @@
             [photoni.webapp.frontend.components.layout :as layout]
             [photoni.webapp.frontend.components.crud.upsert :as crud-upsert]
             [photoni.webapp.frontend.pages.user.user-repository-frontend]
-            [photoni.webapp.frontend.pages.user.user-db-sub-event]
+            [photoni.webapp.frontend.pages.user.user-event]
             [photoni.webapp.frontend.pages.common.layout-default :as layout-default]))
 
 (defn user-view-upsert
@@ -20,48 +20,49 @@
        (prn "user-view-create-render" "user-id:" user-id)
        (let [update? (some? user-id)
              user-row @(subscribe [:user.sub/upsert-user-row])
-             loading? @(subscribe [:user.sub/users-upsert-loading?])]
-         (prn "(user-view-upsert) user-row:" user-row)
+             status @(subscribe [:user.sub/users-upsert-status])]
+         (prn "#2 01 status" status)
          [layout-default/layout-view
           [crud-upsert/upsert-view
-           {:update?     update?
-            :title       "Create a new user"
-            :subtitle    ""
-            :columns     {:user/id      {:label    "Id"
-                                         :pkey     true
-                                         :format   (fn [v]
-                                                     [:div {:class [styles/overflow-ellipsis
-                                                                    styles/truncate
-                                                                    styles/w-12]
-                                                            :title v}
-                                                      v])
-                                         :coercion (fn [x]
-                                                     (prn "coerce user-id " x)
-                                                     (uuid x))}
-                          :user/picture {:label  "Picture"
-                                         :format (fn [v]
-                                                   [:div.flex-shrink-0.w-10.h-10
-                                                    [:img.w-full.h-full.rounded-full {:src "/images/user-picture-sample.jpeg" :alt ""}]])}
-                          :user/name    {:label "Name"}
-                          :user/title   {:label "Title"}
-                          :user/age     {:label "Age" :coercion (fn [x] (prn "coerce age " x) (js/parseInt x))}
-                          :user/email   {:label "Email"}
-                          :user/role    {:label  "Role"
-                                         :format (fn [v]
-                                                   [:span.relative.inline-block.px-3.py-1.font-semibold.text-green-900.leading-tight
-                                                    [:span.absolute.inset-0.bg-green-200.opacity-50.rounded-full {:aria-hidden "true"}]
-                                                    [:span.relative v]])}}
+           {:update?         update?
+            :status          status
+            :row             user-row
+            :title           "Create a new user"
+            :subtitle        ""
+            :update-title    "Update an user"
+            :update-subtitle ""
+            :columns         {:user/id      {:label    "Id"
+                                             :pkey     true
+                                             :format   (fn [v]
+                                                         [:div {:class [styles/overflow-ellipsis
+                                                                        styles/truncate
+                                                                        styles/w-12]
+                                                                :title v}
+                                                          v])
+                                             :coercion (fn [x]
+                                                         (prn "coerce user-id " x)
+                                                         (uuid x))}
+                              :user/picture {:label  "Picture"
+                                             :format (fn [v]
+                                                       [:div.flex-shrink-0.w-10.h-10
+                                                        [:img.w-full.h-full.rounded-full {:src "/images/user-picture-sample.jpeg" :alt ""}]])}
+                              :user/name    {:label "Name"}
+                              :user/title   {:label "Title"}
+                              :user/age     {:label "Age" :coercion (fn [x] (prn "coerce age " x) (js/parseInt x))}
+                              :user/email   {:label "Email"}
+                              :user/role    {:label  "Role"
+                                             :format (fn [v]
+                                                       [:span.relative.inline-block.px-3.py-1.font-semibold.text-green-900.leading-tight
+                                                        [:span.absolute.inset-0.bg-green-200.opacity-50.rounded-full {:aria-hidden "true"}]
+                                                        [:span.relative v]])}}
 
-            :row         user-row
-            :submit-fn   (fn [user-fields]
-                           (prn "on submit fn" user-fields)
-                           (dispatch [:user.event/upsert-user user-fields]))
-
-            :loading?    loading?
-            :add-user-fn #(dispatch [::events/navigate :view/user-insert])
+            :submit-fn       (fn [user-fields]
+                               (prn "on submit fn" user-fields)
+                               (dispatch [:user.event/upsert-user user-fields]))
+            :add-user-fn     #(dispatch [::events/navigate :view/user-insert])
             :delete-user-fn
-                         (fn [user-id]
-                           (dispatch [:user.event/delete-user user-id]))}]]))
+                             (fn [user-id]
+                               (dispatch [:user.event/delete-user user-id]))}]]))
 
      :component-did-mount
      (fn user-view-create-did-mount [this]

@@ -4,7 +4,7 @@
             [re-frame.core :as re-frame :refer [subscribe dispatch reg-event-fx reg-event-db reg-sub]]
             [photoni.webapp.frontend.pages.user.user-repository-frontend]
             [photoni.webapp.frontend.events :as events]
-            [photoni.webapp.frontend.pages.user.user-db-sub-event]
+            [photoni.webapp.frontend.pages.user.user-event]
             [photoni.webapp.frontend.components.components :as components]
     #_[photoni.webapp.frontend.domain.user :as domain-user]
             [photoni.webapp.frontend.utils.tailwind-styles :as styles]
