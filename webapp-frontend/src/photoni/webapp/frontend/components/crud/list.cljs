@@ -60,6 +60,7 @@
               (fn []
                 ;; TODO: do not convert uuid here, should be done on repository
                 (delete-user-fn (uuid @user-id-to-delete))) delete-modal-visible])
+           (when loading? [components/load-spinner])
            [:table.min-w-full.divide-y.divide-gray-200
             [:thead.bg-gray-50
              [:tr
@@ -75,7 +76,7 @@
 
 
             [:tbody
-             (when loading? [components/load-spinner])
+
              (map (fn [{:user/keys [id] :as row}]
                     ^{:key id} [:tr.bg-white
                                 [:td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium

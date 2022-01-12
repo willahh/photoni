@@ -3,7 +3,8 @@
             [photoni.webapp.backend.user.user-service :refer [user-service-repo]]
             [photoni.webapp.domain.search.search :as search]
             [photoni.webapp.domain.user.user :as user]
-            [photoni.webapp.domain.user.user-service :as user-service])
+            [photoni.webapp.domain.user.user-service :as user-service]
+            [photoni.webapp.domain.role.role-entity :as role])
   (:import (java.util UUID)))
 
 (def tag-user "user")
@@ -110,7 +111,7 @@
                         user/spec-name
                         user/spec-title
                         user/spec-email
-                        user/spec-role
+                        role/spec-role
                         user/spec-age]}
    :responses   {200 {:body user/spec-user}}
    :handler     (fn [{{{:user/keys [id role email age name title]} :body :as body} :parameters}]
@@ -121,7 +122,7 @@
                     (def role role)
                     (def email email)
                     (def age age)
-                    (def name name)
+                    #_(def name name)
                     (def title title)
                     )
                   (let [insert? (nil? id)

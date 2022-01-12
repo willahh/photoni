@@ -1,9 +1,11 @@
 (ns photoni.webapp.domain.user.user
   (:require [malli.core :as m]
             [malli.generator :as mg]
+            [photoni.webapp.domain.utils :as utils]
             [photoni.webapp.domain.common.command :as command]
             [photoni.webapp.domain.common.event :as event]
-            [photoni.webapp.domain.common.query :as query]))
+            [photoni.webapp.domain.common.query :as query]
+            [photoni.webapp.domain.role.role-entity :as role]))
 
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
@@ -45,14 +47,11 @@
                               :description         ""
                               :json-schema/default "user@mail.com"}
                  [:and string? non-empty-string [:re email-regex]]])
-(def spec-role [:user/role {:title               "Role parameter"
-                            :description         "Description for role parameter"
-                            :json-schema/default "role/admin"}
-                [:enum "role/admin"]])                      ;; TODO: use keyword here (need to fix api coercion before, not trivial stuff)
 (def spec-age [:user/age {:title               "Age parameter"
                           :description         "Description for age parameter"
                           :json-schema/default 30}
                nat-int?])
+
 
 (def spec-user
   [:map
@@ -60,7 +59,7 @@
    spec-name
    spec-title
    spec-email
-   spec-role
+   role/spec-role
    spec-age])
 
 (defn set-spec-field-optional
@@ -106,7 +105,7 @@
                     (set-spec-field-optional spec-name)
                     (set-spec-field-optional spec-title)
                     (set-spec-field-optional spec-email)
-                    (set-spec-field-optional spec-role)
+                    (set-spec-field-optional role/spec-role)
                     (set-spec-field-optional spec-age)]]]])
 
 (defn find-users-by-query
@@ -178,18 +177,19 @@
   [:map
    [:type [:enum ::create-user-command]]
    [:fields
-    spec-user]])
+    (utils/filter-spec-fields spec-user #{:user/id})]])
+
 
 (defn create-user-command
   [{:user/keys [id name title email role age] :as fields}]
   (command/->command ::create-user-command
                      create-user-command-spec
-                     #:user{:id    id
-                            :name  name
-                            :title title
-                            :email email
-                            :role  role
-                            :age   age}))
+                     (cond-> #:user{:name  name
+                                    :title title
+                                    :email email
+                                    :role  role
+                                    :age   age}
+                             id (assoc :user/id id))))
 
 (defn user-added-event [add-user-command entity]
   (event/->event ::user-added-event {:from-command add-user-command

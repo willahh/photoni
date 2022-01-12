@@ -24,3 +24,23 @@
               keyword))
         x))
     m))
+
+(defn kw->str
+  "Converti un keyword qualifié ou non en string.
+   - :role/admin => role/admin
+   - :admin => admin"
+  [kw]
+  (let [key-ns (namespace kw)]
+    (str (when key-ns (str key-ns "/"))
+         (name kw))))
+
+(defn filter-spec-fields
+  [spec spec-fields-to-exclude]
+  (reduce (fn [acc spec]
+            (let [pred (if (vector? spec)
+                         (not (spec-fields-to-exclude (first spec)))
+                         true)]
+              (if pred
+                (conj acc spec)
+                acc)))
+          [] spec))

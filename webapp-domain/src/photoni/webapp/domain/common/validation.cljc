@@ -5,13 +5,9 @@
             #?(:clj [clojure.data.json :as json])))
 
 (defn valid-spec [spec x]
-  (do
-    (def spec spec)
-    (def x x)
-    )
   (if (m/validate spec x)
     x
     (let [error-message (me/humanize (m/explain spec x))]
       (do #?(:clj (throw (java.lang.IllegalArgumentException. (json/write-str error-message)))
-             :cljs (js/console.error (str error-message)))
+             :cljs (throw (js/Error. error-message)))
           (log/info {:service ::valid-spec} error-message)))))
