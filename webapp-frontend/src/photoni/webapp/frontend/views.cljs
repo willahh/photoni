@@ -3,11 +3,15 @@
     [re-frame.core :as re-frame]
     [re-frame.core :refer [subscribe dispatch]]
     [photoni.webapp.frontend.routes :as routes]
+    [photoni.webapp.frontend.pages.not-found.not-found :as page-not-found]
+    [photoni.webapp.frontend.pages.home.home :as page-home]
     [photoni.webapp.frontend.pages.home.home :as page-home]
     [photoni.webapp.frontend.pages.about.about :as page-about]
     [photoni.webapp.frontend.pages.user.user-view-list :refer [user-view-list]]
     [photoni.webapp.frontend.pages.user.user-view-upsert :refer [user-view-upsert]]))
 
+(defmethod routes/panels :default [_ route-params]
+  [page-not-found/not-found-panel])
 
 (defmethod routes/panels :view/home [_ route-params]
   [page-home/home-panel])
@@ -19,11 +23,13 @@
   [user-view-list])
 
 (defmethod routes/panels :view/user-edit [_ route-params]
-  (prn "routes/panels :view/user-edit" "route-params:" route-params)
-  [user-view-upsert route-params])
+  [user-view-upsert route-params {:form-mode :form.mode/edit}])
+
+(defmethod routes/panels :view/user-copy [_ route-params]
+  [user-view-upsert route-params {:form-mode :form.mode/copy}])
 
 (defmethod routes/panels :view/user-insert [_ route-params]
-  [user-view-upsert])
+  [user-view-upsert route-params {:form-mode :form.mode/insert}])
 
 (re-frame/reg-sub ::active-panel (fn [db _] (:active-panel db)))
 (re-frame/reg-sub ::route-params (fn [db _] (:route-params db)))

@@ -57,6 +57,7 @@
 (reg-event-fx
   :user.event/fetch-user
   (fn [{:keys [db]} [_ user-id]]
+    (prn "fetch-user user-id:" user-id)
     (go (try
           (let [{:keys [success body] :as response}
                 (<! (user-service/get-user-by-user-id

@@ -1,14 +1,8 @@
 (ns photoni.webapp.frontend.components.layout)
 
 (defn layout
-  [{:view.layout/keys [go-to-home-fn
-                       go-to-about-fn
-                       go-to-user-fn]} component]
+  [component]
   [:div.min-h-screen.bg-white
-   [:div
-    [:div [:a {:on-click go-to-home-fn} "Home"]]
-    [:div [:a {:on-click go-to-about-fn} "About"]]
-    [:div [:a {:on-click go-to-user-fn} "Users"]]]
    [:nav.bg-white.border-b.border-gray-200
     [:div.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8
      [:div.flex.justify-between.h-16
@@ -17,8 +11,9 @@
         [:img.block.lg:hidden.h-8.w-auto {:src "https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" :alt "Workflow"}]
         [:img.hidden.lg:block.h-8.w-auto {:src "https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg" :alt "Workflow"}]]
        [:div.hidden.sm:-my-px.sm:ml-6.sm:flex.sm:space-x-8
-        [:a.border-indigo-500.text-gray-900.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#" :aria-current "page"} "Users"]
-        [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#"} "Groups"]
+        [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/"} "Home"]
+        [:a.border-indigo-500.text-gray-900.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/user" :aria-current "page" } "Users"]
+        [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/group"} "Groups"]
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#"} "Roles"]
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#"} "Rights"]
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#"} "Projects"]
@@ -73,7 +68,7 @@
     [:main
      [:div.max-w-7xl.mx-auto.sm:px-6.lg:px-8
       [:div.px-4.py-8.sm:px-0
-       [:div.border-4.border-dashed.border-gray-200.rounded-lg.h-96
+       [:div
         component
         #_(for [component components]
             [component])

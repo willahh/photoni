@@ -4,7 +4,8 @@
             [photoni.webapp.frontend.utils.tailwind-styles :as styles]
             [photoni.webapp.frontend.components.icons :as icons]
             [re-frame.core :as re-frame :refer [subscribe dispatch reg-event-fx reg-event-db reg-sub]]
-            [reagent.core :as r]))
+            [reagent.core :as r]
+            [photoni.webapp.frontend.translations.translations :refer [trans]]))
 
 (defn input-skeleton-loader
   []
@@ -16,36 +17,45 @@
   [status label]
   (cond
     (= status :form.status/default)
-    [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "submit"}
-     label]
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "submit"} label]
 
     (= status :form.status/processing)
-    [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "button" :disabled true}
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "submit" :disabled true}
      [:svg.animate-spin.h-5.w-5.mr-3.... {:viewBox "0 0 24 24"}] "Processing..."]
 
     (= status :form.status/loading)
-    [:span.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
      {:class [styles/flex styles/animate-pulse]}
      [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
 
 (defn button-cancel
-  [status label]
+  [status label cancel-fn]
   (cond
     (= status :form.status/default)
-    [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "submit"} label]
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :on-click (fn [e] (cancel-fn e))} label]
 
     (= status :form.status/processing)
-    [:button.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "submit" :disabled true}
-     label]
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :disabled true} label]
 
     (= status :form.status/loading)
-    [:span.w-full.flex.justify-center.py-2.px-4.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
      {:class [styles/flex styles/animate-pulse]}
      [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
+
+(defn form-validation-row
+  [form-status form-mode cancel-fn]
+  [:div.pt-5
+   [:div.flex.justify-end
+    [button-cancel form-status "Cancel" cancel-fn]
+    (let [label (case form-mode
+                  :form.mode/insert "Create"
+                  :form.mode/copy "Create"
+                  :form.mode/edit "Update")]
+      [button-submit form-status label])]])
 
 
 (defn field-text
@@ -108,8 +118,6 @@
 
 (defmethod field :field.config.type/select
   [{:keys [form-row-state editable? form-status errors error? key value config]}]
-  (def config {:type :field.config.type/select, :rows [{:key :role/admin, :value "Admin"} {:key :role/super-admin, :value "Super admin"} {:key :role/validateur, :value "Validateur"}]})
-  (prn "config:" config)
   (cond
     (= form-status :form.status/loading)
     [input-skeleton-loader]
@@ -134,57 +142,27 @@
      [field-error-message errors key]]))
 
 
-(comment
-
-
-  (utils/kw->str :role/admin)
-  (let [key :role/admin]
-
-    (comment
-      (let [key-ns (namespace key)]
-        (str (when key-ns (str key-ns "/")) (name key)))
-
-      (namespace :admin)
-      (subs (str key) 1)
-
-      )))
-
-
-
-
-
-
-
-
 
 (defn upsert-view
-  [{:keys [update?
-           title
-           subtitle
-           update-title
-           update-subtitle
+  [{:keys [form-mode
            status
            errors
            columns
            row
-           submit-fn]}]
+           submit-fn
+           cancel-fn]}]
   (let [form-row-state (r/atom {})]
-    (prn ">>>>>>>>> 01 upsert-view RENDER form-row:" form-row-state)
-    (fn [{:keys [update?
-                 title
-                 subtitle
-                 update-title
-                 update-subtitle
+    (fn [{:keys [form-mode
                  status
                  errors
                  columns
                  row
-                 submit-fn]}]
+                 submit-fn
+                 cancel-fn]}]
       (let [form-row-state-empty? (empty? @form-row-state)
-            form-editable? (or (not update?) (not form-row-state-empty?))]
+            form-editable? (or (not= form-mode :upsert.mode/edit) (not form-row-state-empty?))]
         (when form-row-state-empty?
           (reset! form-row-state row))
-
         [:form.space-y-8.divide-y.divide-gray-200
          {:on-submit (fn [e]
                        (prn "on submit")
@@ -192,8 +170,9 @@
                        (let [row (reduce (fn [acc [key {:keys [label pkey coercion] :as column-conf}]]
                                            (let [value (get @form-row-state key)
 
-                                                 ;; Don't process the primary key field in insert mode
-                                                 add-field? (if update?
+                                                 ;; Don't submit primary key field in insert mode or copy mode
+                                                 add-field? (if (or (= form-mode :form.mode/insert)
+                                                                    (= form-mode :form.mode/copy))
                                                               true
                                                               (not pkey))]
                                              (if add-field?
@@ -208,15 +187,21 @@
          [:div.space-y-8.divide-y.divide-gray-200
           [:div.pt-8
            [:div
-            [:h3.text-lg.leading-6.font-medium.text-gray-900 (if update? update-title title)]
-            [:p.mt-1.text-sm.text-gray-500 (if update? update-subtitle subtitle)]]
+            [:h3.text-lg.leading-6.font-medium.text-gray-900
+             (case form-mode
+               :form.mode/insert (trans :trans.user.insert/title)
+               :form.mode/copy (trans :trans.user.copy/title)
+               :form.mode/edit (trans :trans.user.edit/title))]
+            [:p.mt-1.text-sm.text-gray-500
+             (case form-mode
+               :form.mode/insert (trans :trans.user.insert/subtitle)
+               :form.mode/copy (trans :trans.user.copy/subtitle)
+               :form.mode/edit (trans :trans.user.edit/subtitle))]]
            [:div.mt-6.grid.grid-cols-1.gap-y-6.gap-x-4.sm:grid-cols-6
             (doall
               (keep
                 (fn [[key {:keys [label pkey coercion config]
                            :as   column-conf}]]
-                  (prn "column-conf" column-conf)
-                  (prn "config" config)
                   (let [row-value (get @form-row-state key)
                         errors2 (get-in errors [:fields key])]
                     (when-not pkey
@@ -233,9 +218,5 @@
                                 :errors         errors
                                 :error?         errors2}]
                         ]])))
-                columns))
-
-            [:div
-             (let [label (if update? "Update" "Create")]
-               [button-submit status label])
-             [button-cancel status "Cancel"]]]]]]))))
+                columns))]]]
+         [form-validation-row status form-mode cancel-fn]]))))

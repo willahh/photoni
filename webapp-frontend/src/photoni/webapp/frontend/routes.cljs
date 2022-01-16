@@ -6,14 +6,14 @@
     [photoni.webapp.frontend.events :as events]))
 
 (defmulti panels identity)
-(defmethod panels :default [] [:div "No panel found for this route."])
 
 (def routes
   (atom
     ["/" {""            :view/home
           "about"       :view/about
           "user"        :view/user
-          "user/"       {[:user-id "/edit"] :view/user-edit}
+          "user/"       {[:user-id "/edit"] :view/user-edit
+                         [:user-id "/copy"] :view/user-copy}
           "user/insert" :view/user-insert}]))
 
 (defn parse

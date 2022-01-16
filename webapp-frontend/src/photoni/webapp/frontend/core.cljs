@@ -7,7 +7,8 @@
    [photoni.webapp.frontend.views :as views]
    [photoni.webapp.frontend.config :as config]
    [photoni.webapp.frontend.events :as events]
-   [day8.re-frame.tracing :refer-macros [fn-traced]]))
+   [day8.re-frame.tracing :refer-macros [fn-traced]]
+   [photoni.webapp.frontend.translations.translations]))
 
 (defn dev-setup []
   (when config/debug?

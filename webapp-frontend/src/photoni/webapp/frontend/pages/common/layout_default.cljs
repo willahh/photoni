@@ -5,8 +5,5 @@
 
 (defn layout-view
   [component]
-  [layout/layout {:view.layout/go-to-home-fn  #(dispatch [::events/navigate :view/home])
-                  :view.layout/go-to-about-fn #(dispatch [::events/navigate :view/about])
-                  :view.layout/go-to-user-fn  #(dispatch [::events/navigate :view/user])}
-   component])
+  [layout/layout component])
 
