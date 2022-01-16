@@ -57,7 +57,6 @@
 (reg-event-fx
   :user.event/fetch-user
   (fn [{:keys [db]} [_ user-id]]
-    (prn "fetch-user user-id:" user-id)
     (go (try
           (let [{:keys [success body] :as response}
                 (<! (user-service/get-user-by-user-id
@@ -110,8 +109,6 @@
   :user.event/upsert-user
   (fn [{:keys [db]} [_ user-fields]]
     (let []
-      (prn "#1 event upsert-user " (:user/id user-fields) user-fields)
-      (def user-fields user-fields)
       (go (try
             (let [{:keys [success body] :as response}
                   (<! (user-service/create-user user-service-repo

@@ -87,8 +87,6 @@
    :description ""
    :tags        #{tag-user}
    :parameters  {:path [:map user/spec-id]}
-   ;:responses   {200 [:map {}]
-   ;              404 [:map {}]}
    :handler     (fn [{{{:user/keys [id]} :path} :parameters}]
                   (let [deleted? (user-service/delete-user-by-user-id
                                    user-service-repo (user/delete-user-by-user-id-command id))]
@@ -115,16 +113,6 @@
                         user/spec-age]}
    :responses   {200 {:body user/spec-user}}
    :handler     (fn [{{{:user/keys [id role email age name title]} :body :as body} :parameters}]
-                  (prn "CREATE USER x :" id role email age)
-
-                  (do
-                    (def id id)
-                    (def role role)
-                    (def email email)
-                    (def age age)
-                    #_(def name name)
-                    (def title title)
-                    )
                   (let [insert? (nil? id)
                         id (or id (java.util.UUID/randomUUID))
                         user-entity (user-service/create-user

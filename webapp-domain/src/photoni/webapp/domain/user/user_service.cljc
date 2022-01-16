@@ -14,9 +14,6 @@
   UserServiceProtocol
   (get-users
     [_ get-users-query]
-    (prn "get-users (domain)" get-users-query)
-    (prn "user-repo" user-repo)
-
     (let [users-entities (user-repository/get-users user-repo)
           event (user/users-retrieved-event get-users-query users-entities)]
       (event-bus/publish! event-bus-repo event)
@@ -37,7 +34,6 @@
       user-entity))
   (create-user
     [_ create-user-command]
-    (prn "create-user (domain)")
     (let [user-fields (get-in create-user-command [:fields])
           user-entity (user-repository/create-user user-repo user-fields)
           event (user/user-added-event create-user-command user-entity)]

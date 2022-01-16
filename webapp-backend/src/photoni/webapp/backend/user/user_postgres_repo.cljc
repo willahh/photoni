@@ -8,6 +8,7 @@
             [photoni.webapp.backend.crud.crud :as crud]
             [photoni.webapp.backend.postgres.db-postgres :refer [db]]))
 
+(def table-name :puser)
 (def user-db->user-domain-fields
   {:puser/id         :user/id
    :puser/name       :user/name
@@ -21,16 +22,16 @@
 (defrecord UserPostgresRepository []
   user-repository/UserRepository
   (find-users-by [_ query-fields]
-    (crud/find-many-by :puser user-db->user-domain-fields query-fields))
+    (crud/find-many-by table-name user-db->user-domain-fields query-fields))
   (get-users [_]
-    (crud/find-many-by :puser user-db->user-domain-fields {:fields [:*]}))
+    (crud/find-many-by table-name user-db->user-domain-fields {:fields [:*]}))
   (create-user [_ user-fields]
-    (crud/upsert :puser user-db->user-domain-fields user-fields :id))
+    (crud/upsert table-name user-db->user-domain-fields user-fields :id))
   (get-user-by-user-id [_ user-id]
-    (crud/find-by-field-value :puser user-db->user-domain-fields :id user-id))
+    (crud/find-by-field-value table-name user-db->user-domain-fields :id user-id))
   (delete-user-by-user-id [user-repo user-id]
     (let [[user-db]
-          (->> (-> (sqlh/delete-from :puser)
+          (->> (-> (sqlh/delete-from table-name)
                    (sqlh/where [:= :id user-id])
                    (sqlh/returning :*)
                    sql/format)
@@ -41,12 +42,10 @@
   :start (->UserPostgresRepository))
 
 (comment
-  (user-repository-protocol/find-users-by
+  (user-repository/find-users-by
     user-repository-postgres
     {:fields [:*]
      :orders [[:id :asc]]
      :limit  1
      ;;:offset 3
-     })
-
-  )
+     }))

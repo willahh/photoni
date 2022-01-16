@@ -15,9 +15,7 @@
   [{:keys [user-id] :as route-params}
    {:keys [form-mode] :as opts}]
   (r/create-class
-    {
-     ;;:display-name "users-page"
-     :reagent-render
+    {:reagent-render
      (fn user-view-create-render []
        (let [user-row @(subscribe [:user.sub/upsert-user-row])
              status @(subscribe [:user.sub/users-upsert-status])

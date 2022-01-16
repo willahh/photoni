@@ -60,11 +60,9 @@
 
 
 (defn coercion-error-handler [status]
-  (prn "coercion-error-handler " status)
   (let [printer (expound/custom-printer {:theme :figwheel-theme, :print-specs? false})
         handler (exception/create-coercion-handler status)]
     (fn [exception request]
-      (prn "coercion-error-handler FN" (-> exception ex-data :problems))
       (printer (-> exception ex-data :problems))
       (handler exception request))))
 
@@ -121,7 +119,8 @@
                                 :description "with [malli](https://github.com/metosin/malli) and reitit-ring"}}
                :handler (swagger/create-swagger-handler)}}]
        route-user/routes
-       route-group/routes]
+       route-group/routes
+       ]
 
       {;;:reitit.middleware/transform dev/print-request-diffs ;; pretty diffs
        ;;:validate spec/validate ;; enable spec validation for route data

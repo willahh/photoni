@@ -12,7 +12,8 @@
         [:img.hidden.lg:block.h-8.w-auto {:src "https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg" :alt "Workflow"}]]
        [:div.hidden.sm:-my-px.sm:ml-6.sm:flex.sm:space-x-8
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/"} "Home"]
-        [:a.border-indigo-500.text-gray-900.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/user" :aria-current "page" } "Users"]
+        [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/api"} "Api"]
+        [:a.border-indigo-500.text-gray-900.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/user" :aria-current "page"} "Users"]
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "/group"} "Groups"]
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#"} "Roles"]
         [:a.border-transparent.text-gray-500.hover:border-gray-300.hover:text-gray-700.inline-flex.items-center.px-1.pt-1.border-b-2.text-sm.font-medium {:href "#"} "Rights"]

@@ -2,7 +2,8 @@
   (:require [next.jdbc :as jdbc]
             [honey.sql :as sql]
             [honey.sql.helpers :as sqlh]
-            [photoni.webapp.backend.postgres.db-postgres :refer [db]])
+            [photoni.webapp.backend.postgres.db-postgres :refer [db]]
+            #_[clojure.java.jdbc :as jdbc])
   (:import (java.util UUID)))
 
 (defn- map-domain-fields->db-fields
@@ -23,6 +24,7 @@
 (defn- find-by!
   "Find fields by clauses, orders, limit and offset"
   [{:keys [table fields clauses orders limit offset] :as opts}]
+  (prn "find-by!" [table fields clauses orders limit offset])
   (->> (cond-> (-> (sqlh/select fields)
                    (sqlh/from table))
                (seq clauses) (sqlh/where clauses)

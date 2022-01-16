@@ -27,46 +27,47 @@
                            loading? @(subscribe [:user.sub/users-loading])]
                        [layout-default/layout-view
                         [crud-list/crud-list
-                         {:title       (trans :trans.user.list/title)
-                          :rows        (map (fn [{:user/keys [id title name age email role]}]
-                                              #:user{:id      id
-                                                     :picture "TODO"
-                                                     :name    name
-                                                     :title   title
-                                                     :age     age
-                                                     :email   email
-                                                     :role    role})
-                                            users-rows)
-                          :columns     {:select       {:label ""
-                                                       :sort  false}
-                                        :user/id      {:label  (trans :trans.user.field/id) :sort true
-                                                       :format (fn [v]
-                                                                 [:div {:class [styles/overflow-ellipsis
-                                                                                styles/truncate
-                                                                                styles/w-12]
-                                                                        :title v}
-                                                                  v])}
-                                        :user/picture {:label  (trans :trans.user.field/picture) :sort true
-                                                       :format (fn [v]
-                                                                 [:div.flex-shrink-0.w-10.h-10
-                                                                  [:img.w-full.h-full.rounded-full {:src "/images/user-picture-sample.jpeg" :alt ""}]])}
-                                        :user/name    {:label (trans :trans.user.field/name) :sort true}
-                                        :user/title   {:label (trans :trans.user.field/title) :sort true}
-                                        :user/age     {:label (trans :trans.user.field/age) :sort true}
-                                        :user/email   {:label (trans :trans.user.field/email) :sort true}
-                                        :user/role    {:label  (trans :trans.user.field/role) :sort true
-                                                       :format (fn [v]
-                                                                 [:span.relative.inline-block.px-3.py-1.font-semibold.text-green-900.leading-tight
-                                                                  [:span.absolute.inset-0.bg-green-200.opacity-50.rounded-full {:aria-hidden "true"}]
-                                                                  [:span.relative v]])}}
-                          :loading?    loading?
-                          :add-user-fn (fn []
-                                         (prn "add user fn dispatch")
-                                         (dispatch [::events/navigate :view/user-insert]))
-                          :delete-user-fn
-                                       (fn [user-id]
-                                         (prn "delete-user-fn user-id" user-id)
-                                         (dispatch [:user.event/delete-user user-id]))}]]))
+                         {:title    (trans :trans.user.list/title)
+                          :trans    {:trans.entity.list/title (trans :trans.user.list/title)}
+                          :rows     (map (fn [{:user/keys [id title name age email role]}]
+                                           {:id      id
+                                            :picture "TODO"
+                                            :name    name
+                                            :title   title
+                                            :age     age
+                                            :email   email
+                                            :role    role})
+                                         users-rows)
+                          :columns  {:select  {:label ""
+                                               :sort  false}
+                                     :id      {:label  (trans :trans.user.field/id) :sort true
+                                               :format (fn [v]
+                                                         [:div {:class [styles/overflow-ellipsis
+                                                                        styles/truncate
+                                                                        styles/w-12]
+                                                                :title v}
+                                                          v])}
+                                     :picture {:label  (trans :trans.user.field/picture) :sort true
+                                               :format (fn [v]
+                                                         [:div.flex-shrink-0.w-10.h-10
+                                                          [:img.w-full.h-full.rounded-full {:src "/images/user-picture-sample.jpeg" :alt ""}]])}
+                                     :name    {:label (trans :trans.user.field/name) :sort true}
+                                     :title   {:label (trans :trans.user.field/title) :sort true}
+                                     :age     {:label (trans :trans.user.field/age) :sort true}
+                                     :email   {:label (trans :trans.user.field/email) :sort true}
+                                     :role    {:label  (trans :trans.user.field/role) :sort true
+                                               :format (fn [v]
+                                                         [:span.relative.inline-block.px-3.py-1.font-semibold.text-green-900.leading-tight
+                                                          [:span.absolute.inset-0.bg-green-200.opacity-50.rounded-full {:aria-hidden "true"}]
+                                                          [:span.relative v]])}}
+                          :loading? loading?
+                          :add-url  (fn [] (str "/user/insert"))
+                          :edit-url (fn [user-id] (str "/user/" user-id "/edit"))
+                          :copy-url (fn [user-id] (str "/user/" user-id "/copy"))
+                          :delete-entity-fn
+                                    (fn [user-id]
+                                      (prn "delete-user-fn user-id" user-id)
+                                      (dispatch [:user.event/delete-user user-id]))}]]))
      :component-did-mount
                    (fn users-page-did-mount [this]
                      (dispatch [:user.event/fetch-users]))

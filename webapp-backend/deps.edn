@@ -24,7 +24,8 @@
              com.rpl/specter                   {:mvn/version "1.1.2"}
              org.clojure/data.json             {:mvn/version "2.4.0"}}
  :aliases   {:dev  {:extra-paths ["dev"]
-                    :extra-deps  {vvvvalvalval/scope-capture {:mvn/version "0.3.3-s1"}}}
+                    :extra-deps  {vvvvalvalval/scope-capture {:mvn/version "0.3.3-s1"}
+                                  org.clojure/tools.trace    {:mvn/version "0.7.10"}}}
              :test {:extra-paths ["test"]
                     :extra-deps  {org.clojure/test.check {:mvn/version "0.10.0"}
                                   midje/midje            {:mvn/version "1.10.5"}

@@ -116,23 +116,6 @@
   (event/->event ::find-users-by-event {:from-query find-users-by-query
                                         :results    results}))
 
-(comment
-  ;; were : [:and [:= :a [:param :baz]] [:= :b [:inline 42]]]
-  (require '[malli.generator :as mg])
-  (require '[malli.provider :as mp])
-  (mg/generate find-users-by-spec)
-  (mg/generate find-users-by-response-spec)
-  (mg/generate spec-user)
-
-  (find-users-by-query {:fields  [:user/name
-                                  :user/id]
-                        :clauses [:and
-                                  [:or [:= :name "test"]]]
-                        :orders  [[:id :asc]]
-                        :limit   10,
-                        :offset  1
-                        })
-  )
 
 ;; ┌───────────────────────────────────────────────────────────────────────────┐
 ;; │ [query] get-users                                                         │

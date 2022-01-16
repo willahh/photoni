@@ -6,26 +6,27 @@
 
 (defn crud-list
   [{:keys [title
+           trans
            rows
            columns
-           add-user-fn
-           delete-user-fn
-           go-to-home-fn
-           go-to-about-fn
-           go-to-user-fn
-           loading?]}]
+           delete-entity-fn
+           loading?
+           add-url
+           edit-url
+           copy-url
+           ]}]
 
   (let [delete-modal-visible (r/atom false)
-        user-id-to-delete (r/atom nil)]
+        entity-id-to-delete (r/atom nil)]
     (fn [{:keys [title
+                 trans
                  rows
                  columns
-                 add-user-fn
-                 delete-user-fn
-                 go-to-home-fn
-                 go-to-about-fn
-                 go-to-user-fn
-                 loading?]}]
+                 delete-entity-fn
+                 loading?
+                 add-url
+                 edit-url
+                 copy-url]}]
       [:div {:class [styles/md:relative]}
 
 
@@ -37,9 +38,9 @@
           {:type "button"} icons/icon-view-grid]
          [:button.inline-flex.items-center.px-4.py-2.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.bg-white.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
           {:type "button"} icons/icon-view-list]
-         [:button.ml-3.inline-flex.items-center.px-4.py-2.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-          {:type "button" :on-click #(add-user-fn)} [:span {:class [styles/flex styles/items-center]}
-                                                     icons/icon-add "Add user"]]]]
+         [:a.ml-3.inline-flex.items-center.px-4.py-2.border.border-transparent.rounded-md.shadow-sm.text-sm.font-medium.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+          {:href (add-url)} [:span {:class [styles/flex styles/items-center]}
+                                                     icons/icon-add (:trans.entity.list/title trans)]]]]
 
 
 
@@ -57,7 +58,7 @@
               ""
               (fn []
                 ;; TODO: do not convert uuid here, should be done on repository
-                (delete-user-fn (uuid @user-id-to-delete))) delete-modal-visible])
+                (delete-entity-fn (uuid @entity-id-to-delete))) delete-modal-visible])
            (when loading? [components/load-spinner])
            [:table.min-w-full.divide-y.divide-gray-200
             [:thead.bg-gray-50
@@ -72,10 +73,8 @@
               [:th.relative.px-6.py-3 {:scope "col"}
                [:span.sr-only "Edit"]]]]
 
-
             [:tbody
-
-             (map (fn [{:user/keys [id] :as row}]
+             (map (fn [{:keys [id] :as row}]
                     ^{:key id} [:tr.bg-white
                                 [:td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
                                  {:class [styles/border-b styles/border-gray-200]}
@@ -93,15 +92,15 @@
                                 [:td.px-6.py-4.whitespace-nowrap.text-right.text-sm.font-medium
                                  {:class [styles/border-b styles/border-gray-200]}
 
-                                 [components/button-w-icon {:href     (str "/user/" id "/edit")
+                                 [components/button-w-icon {:href     (edit-url id)
                                                             :title    "Edit"} icons/icon-edit]
-                                 [components/button-w-icon {:href     (str "/user/" id "/copy")
+                                 [components/button-w-icon {:href     (copy-url id)
                                                             :title    "Duplicate"} icons/icon-duplicate]
                                  [components/button-w-icon {:type     "button"
                                                             :title    "Delete"
                                                             :on-click (fn []
                                                                         (reset! delete-modal-visible true)
-                                                                        (reset! user-id-to-delete id))} icons/icon-delete]]])
+                                                                        (reset! entity-id-to-delete id))} icons/icon-delete]]])
                   rows)
              ]]
            [components/pagination]

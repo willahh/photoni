@@ -9,12 +9,21 @@
 
 (def routes
   (atom
-    ["/" {""            :view/home
-          "about"       :view/about
-          "user"        :view/user
-          "user/"       {[:user-id "/edit"] :view/user-edit
-                         [:user-id "/copy"] :view/user-copy}
-          "user/insert" :view/user-insert}]))
+    ["/" {""             :view/home
+          "api"          :view/api
+          "about"        :view/about
+
+          "user"         :view/user
+          "user/"        {[:user-id "/edit"] :view/user-edit
+                          [:user-id "/copy"] :view/user-copy}
+          "user/insert"  :view/user-insert
+
+          "group"        :view/group
+          "group/"       {[:group-id "/edit"] :view/group-edit
+                          [:group-id "/copy"] :view/group-copy}
+          "group/insert" :view/group-insert
+
+          }]))
 
 (defn parse
   [url]
