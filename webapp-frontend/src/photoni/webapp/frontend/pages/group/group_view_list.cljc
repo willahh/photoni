@@ -26,30 +26,34 @@
                            loading? @(subscribe [:group.sub/groups-loading])]
                        [layout-default/layout-view
                         [crud-list/crud-list
-                         {:title    (trans :trans.entity.list/title)
-                          :trans    {:trans.entity.list/title (trans :trans.group.list/title)}
-                          :rows     (map (fn [{:group/keys [id title name age email role]}]
-                                           {:id   id
-                                            :name name})
-                                         groups-rows)
-                          :columns  {:select {:label ""
-                                              :sort  false}
-                                     :id     {:label  (trans :trans.group.field/id) :sort true
-                                              :format (fn [v]
-                                                        [:div {:class [styles/overflow-ellipsis
-                                                                       styles/truncate
-                                                                       styles/w-12]
-                                                               :title v}
-                                                         v])}
-                                     :name   {:label (trans :trans.group.field/name) :sort true}}
-                          :loading? loading?
-                          :add-url  (fn [] (str "/group/insert"))
-                          :edit-url (fn [group-id] (str "/group/" group-id "/edit"))
-                          :copy-url (fn [group-id] (str "/group/" group-id "/copy"))
-                          :delete-group-fn
-                                    (fn [group-id]
-                                      (prn "delete-group-fn group-id" group-id)
-                                      (dispatch [:group.event/delete-group group-id]))}]]))
+                         {:title      (trans :trans.entity.list/title)
+                          :trans-opts {:trans.entity.list/title     (trans :trans.group.list/title)
+                                       :trans.entity.list/add       (trans :trans.group.list/add)
+                                       :trans.entity.list/filter    (trans :trans.list/filter)
+                                       :trans.entity.list/view-grid (trans :trans.list/view-grid)
+                                       :trans.entity.list/view-list (trans :trans.list/view-list)}
+                          :rows       (map (fn [{:group/keys [id title name age email role]}]
+                                             {:id   id
+                                              :name name})
+                                           groups-rows)
+                          :columns    {:select {:label ""
+                                                :sort  false}
+                                       :id     {:label  (trans :trans.group.field/id) :sort true
+                                                :format (fn [v]
+                                                          [:div {:class [styles/overflow-ellipsis
+                                                                         styles/truncate
+                                                                         styles/w-12]
+                                                                 :title v}
+                                                           v])}
+                                       :name   {:label (trans :trans.group.field/name) :sort true}}
+                          :loading?   loading?
+                          :add-url    (fn [] (str "/group/insert"))
+                          :edit-url   (fn [group-id] (str "/group/" group-id "/edit"))
+                          :copy-url   (fn [group-id] (str "/group/" group-id "/copy"))
+                          :delete-entity-fn
+                                      (fn [group-id]
+                                        (prn "delete-group-fn group-id" group-id)
+                                        (dispatch [:group.event/delete-group group-id]))}]]))
      :component-did-mount
                    (fn groups-page-did-mount [this]
                      (dispatch [:group.event/fetch-groups]))

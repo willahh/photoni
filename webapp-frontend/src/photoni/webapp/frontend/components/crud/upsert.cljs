@@ -13,49 +13,18 @@
    [:div.flex-1
     [:div {:class [styles/h-6 styles/bg-gray-200 styles/rounded]}]]])
 
-(defn button-submit
-  [status label]
-  (cond
-    (= status :form.status/default)
-    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "submit"} label]
 
-    (= status :form.status/processing)
-    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "submit" :disabled true}
-     [:svg.animate-spin.h-5.w-5.mr-3.... {:viewBox "0 0 24 24"}] "Processing..."]
-
-    (= status :form.status/loading)
-    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:class [styles/flex styles/animate-pulse]}
-     [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
-
-(defn button-cancel
-  [status label cancel-fn]
-  (cond
-    (= status :form.status/default)
-    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "button" :on-click (fn [e] (cancel-fn e))} label]
-
-    (= status :form.status/processing)
-    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:type "button" :disabled true} label]
-
-    (= status :form.status/loading)
-    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
-     {:class [styles/flex styles/animate-pulse]}
-     [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
 
 (defn form-validation-row
   [form-status form-mode cancel-fn]
   [:div.pt-5
    [:div.flex.justify-end
-    [button-cancel form-status "Cancel" cancel-fn]
+    [components/button-cancel form-status "Cancel" cancel-fn]
     (let [label (case form-mode
                   :form.mode/insert "Create"
                   :form.mode/copy "Create"
                   :form.mode/edit "Update")]
-      [button-submit form-status label])]])
+      [components/button-submit form-status label])]])
 
 
 (defn field-text
@@ -165,14 +134,12 @@
           (reset! form-row-state row))
         [:form.space-y-8.divide-y.divide-gray-200
          {:on-submit (fn [e]
-                       (prn "on submit")
                        (.preventDefault e)
                        (let [row (reduce (fn [acc [key {:keys [label pkey coercion] :as column-conf}]]
                                            (let [value (get @form-row-state key)
 
-                                                 ;; Don't submit primary key field in insert mode or copy mode
-                                                 add-field? (if (or (= form-mode :form.mode/insert)
-                                                                    (= form-mode :form.mode/copy))
+                                                 ;; Don't submit primary key field in insert or copy form mode
+                                                 add-field? (if (= form-mode :form.mode/edit)
                                                               true
                                                               (not pkey))]
                                              (if add-field?
@@ -204,6 +171,7 @@
                            :as   column-conf}]]
                   (let [row-value (get @form-row-state key)
                         errors2 (get-in errors [:fields key])]
+                    (prn "row-value:" row-value "key:" key)
                     (when-not pkey
                       ^{:key key}
                       [:div.sm:col-span-3

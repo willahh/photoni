@@ -20,7 +20,7 @@
   (get-groups [_]
     (crud/find-many-by table-name group-db->group-domain-fields {:fields [:*]}))
   (create-group [_ group-fields]
-    (crud/upsert table-name group-db->group-domain-fields group-fields :group_id))
+    (crud/upsert table-name group-db->group-domain-fields group-fields :group_id :pgroup/group_id))
   (get-group-by-group-id [_ group-id]
     (crud/find-by-field-value table-name group-db->group-domain-fields :group_id group-id))
   (delete-group-by-group-id [group-repo group-id]

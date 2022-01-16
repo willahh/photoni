@@ -108,6 +108,8 @@
 (reg-event-fx
   :user.event/upsert-user
   (fn [{:keys [db]} [_ user-fields]]
+    (prn "upsert-user")
+    (def user-fields user-fields)
     (let []
       (go (try
             (let [{:keys [success body] :as response}

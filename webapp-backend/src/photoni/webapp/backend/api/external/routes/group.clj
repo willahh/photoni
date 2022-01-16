@@ -98,10 +98,13 @@
    :tags        #{tag-group}
    :parameters  {:body [:map
                         (api-utils/set-spec-field-optional group/spec-id)
-                        group/spec-name
-                        role/spec-role]}
+                        group/spec-name]}
    :responses   {200 {:body group/spec-group}}
    :handler     (fn [{{{:group/keys [id name]} :body :as body} :parameters}]
+                  (prn "api-groups-create-group handler")
+                  (prn "name" name)
+                  (def id id)
+                  (def name name)
                   (let [insert? (nil? id)
                         id (or id (java.util.UUID/randomUUID))
                         group-entity (group-service/create-group

@@ -26,16 +26,16 @@
             :status    status
             :errors    errors
             :row       group-row
-            :columns   {:id   {:label    (trans :trans.group.field/id)
-                               :pkey     true
-                               :format   (fn [v]
-                                           [:div {:class [styles/overflow-ellipsis
-                                                          styles/truncate
-                                                          styles/w-12]
-                                                  :title v}
-                                            v])
-                               :coercion (fn [x] (uuid x))}
-                        :name {:label (trans :trans.group.field/name)}}
+            :columns   {:group/id   {:label    (trans :trans.group.field/id)
+                                     :pkey     true
+                                     :format   (fn [v]
+                                                 [:div {:class [styles/overflow-ellipsis
+                                                                styles/truncate
+                                                                styles/w-12]
+                                                        :title v}
+                                                  v])
+                                     :coercion (fn [x] (uuid x))}
+                        :group/name {:label (trans :trans.group.field/name)}}
 
             :submit-fn (fn [group-fields]
                          (prn "#1 submit-fn group-fields:" group-fields)

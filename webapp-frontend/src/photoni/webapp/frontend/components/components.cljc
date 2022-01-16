@@ -129,3 +129,99 @@
     [:div.flex.justify-end
      [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500 {:type "button"} "Cancel"]
      [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500 {:type "submit"} "Save"]]]])
+
+(defn select
+  [{:keys [width]} options]
+  (into [:select#location.mt-1.block.w-full.pl-3.pr-10.py-2.text-base.border.border-gray-300.focus:outline-none.focus:ring-indigo-500.focus:border-indigo-500.sm:text-sm.rounded-md
+          {:name "location"}]
+         options))
+
+(defn button-secondary
+  [status label click-fn]
+  (cond
+    (= status :form.status/default)
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :on-click (fn [e] (click-fn e))} label]
+
+    (= status :form.status/processing)
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :disabled true} label]
+
+    (= status :form.status/loading)
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:class [styles/flex styles/animate-pulse]}
+     [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
+
+(defn button-primary
+  [status label click-fn]
+  (cond
+    (= status :form.status/default)
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :on-click (fn [e] (click-fn e))} label]
+
+    (= status :form.status/processing)
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :disabled true}
+     [:svg.animate-spin.h-5.w-5.mr-3.... {:viewBox "0 0 24 24"}] "Processing..."]
+
+    (= status :form.status/loading)
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:class [styles/flex styles/animate-pulse]}
+     [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
+
+(defn button-submit
+  [status label]
+  (cond
+    (= status :form.status/default)
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "submit"} label]
+
+    (= status :form.status/processing)
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "submit" :disabled true}
+     [:svg.animate-spin.h-5.w-5.mr-3.... {:viewBox "0 0 24 24"}] "Processing..."]
+
+    (= status :form.status/loading)
+    [:button.ml-3.inline-flex.justify-center.py-2.px-4.border.border-transparent.shadow-sm.text-sm.font-medium.rounded-md.text-white.bg-indigo-600.hover:bg-indigo-700.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:class [styles/flex styles/animate-pulse]}
+     [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
+
+(defn button-cancel
+  [status label cancel-fn]
+  (cond
+    (= status :form.status/default)
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :on-click (fn [e] (cancel-fn e))} label]
+
+    (= status :form.status/processing)
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:type "button" :disabled true} label]
+
+    (= status :form.status/loading)
+    [:button.bg-white.py-2.px-4.border.border-gray-300.rounded-md.shadow-sm.text-sm.font-medium.text-gray-700.hover:bg-gray-50.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-indigo-500
+     {:class [styles/flex styles/animate-pulse]}
+     [:span {:class [styles/bg-gray-200 styles/rounded]}]]))
+
+
+(defn breacrumb
+  []
+  [:nav.flex {:aria-label "Breadcrumb"}
+   [:ol.flex.items-center.space-x-4 {:role "list"}
+    [:li
+     [:div
+      [:a.text-gray-400.hover:text-gray-500 {:href "#"}
+       [:svg.flex-shrink-0.h-5.w-5 {:xmlns "http://www.w3.org/2000/svg" :viewBox "0 0 20 20" :fill "currentColor" :aria-hidden "true"}
+        [:path {:d "M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"}]]
+       [:span.sr-only "Home"]]]]
+    [:li
+     [:div.flex.items-center
+      [:svg.flex-shrink-0.h-5.w-5.text-gray-400 {:xmlns "http://www.w3.org/2000/svg" :viewBox "0 0 20 20" :fill "currentColor" :aria-hidden "true"}
+       [:path {:fill-rule "evenodd" :d "M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" :clip-rule "evenodd"}]]
+      [:a.ml-4.text-sm.font-medium.text-gray-500.hover:text-gray-700 {:href "#"}
+       "Users"]]]
+    [:li
+     [:div.flex.items-center
+      [:svg.flex-shrink-0.h-5.w-5.text-gray-400 {:xmlns "http://www.w3.org/2000/svg" :viewBox "0 0 20 20" :fill "currentColor" :aria-hidden "true"}
+       [:path {:fill-rule "evenodd" :d "M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" :clip-rule "evenodd"}]]
+      [:a.ml-4.text-sm.font-medium.text-gray-500.hover:text-gray-700 {:href "#" :aria-current "page"}
+       "User a"]]]]])

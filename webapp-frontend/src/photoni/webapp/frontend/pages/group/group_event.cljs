@@ -108,6 +108,8 @@
 (reg-event-fx
   :group.event/upsert-group
   (fn [{:keys [db]} [_ group-fields]]
+    (prn ":group.event/upsert-group")
+    (def group-fields group-fields)
     (let []
       (go (try
             (let [{:keys [success body] :as response}
